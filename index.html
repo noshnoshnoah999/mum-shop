@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, maximum-scale=1" />
-<meta name="theme-color" content="#1d9e75" />
+<meta name="theme-color" content="#7a5640" />
 <meta name="apple-mobile-web-app-capable" content="yes" />
 <meta name="apple-mobile-web-app-status-bar-style" content="default" />
 <meta name="apple-mobile-web-app-title" content="Supermarket Shopping" />
@@ -12,9 +12,9 @@
 <title>Supermarket Shopping</title>
 <style>
   :root{
-    --bg:#f6f4ec; --card:#ffffff; --ink:#23221c; --muted:#8a887d; --line:#e8e5d9;
-    --accent:#1d9e75; --accent-d:#0f6e56; --accent-soft:#e1f5ee;
-    --coral:#d85a30; --warn:#fdf0e7; --gold:#bb8a1e;
+    --bg:#f4ede4; --card:#fffdfa; --ink:#2c2218; --muted:#988b7c; --line:#e7dccd;
+    --accent:#7a5640; --accent-d:#5a3d2b; --accent-soft:#efe3d6;
+    --coral:#c4622f; --warn:#f8ece1; --gold:#bb8a1e;
     --radius:16px; --tap:50px;
   }
   *{box-sizing:border-box; -webkit-tap-highlight-color:transparent;}
@@ -26,7 +26,7 @@
     -webkit-font-smoothing:antialiased; overscroll-behavior-y:contain;
   }
   .wrap{max-width:580px; margin:0 auto; padding:0 14px;}
-  header{position:sticky; top:0; z-index:30; background:linear-gradient(var(--bg) 70%, rgba(246,244,236,0)); padding:calc(10px + env(safe-area-inset-top)) 0 6px;}
+  header{position:sticky; top:0; z-index:30; background:linear-gradient(var(--bg) 70%, rgba(244,237,228,0)); padding:calc(10px + env(safe-area-inset-top)) 0 6px;}
   .hrow{display:flex; align-items:center; justify-content:space-between;}
   header h1{font-size:26px; margin:0; font-weight:800; letter-spacing:-.02em;}
   .datetime{font-size:13px; color:var(--muted); font-weight:600; margin-top:1px;}
@@ -71,7 +71,7 @@
   .chip{background:var(--accent-soft); color:var(--accent-d); border:0; border-radius:999px; padding:9px 14px; font-size:15px; cursor:pointer; font-weight:700;}
   .chip.out{background:var(--card); border:1px solid var(--line); color:var(--muted);}
 
-  .bigbtn{display:flex; align-items:center; justify-content:center; gap:9px; width:100%; height:58px; border:0; border-radius:15px; background:var(--accent); color:#fff; font-size:18px; font-weight:800; cursor:pointer; box-shadow:0 2px 8px rgba(29,158,117,.25); transition:transform .12s;}
+  .bigbtn{display:flex; align-items:center; justify-content:center; gap:9px; width:100%; height:58px; border:0; border-radius:15px; background:var(--accent); color:#fff; font-size:18px; font-weight:800; cursor:pointer; box-shadow:0 2px 8px rgba(122,86,64,.3); transition:transform .12s;}
   .bigbtn:active{transform:scale(.98);} .bigbtn .ic{font-size:22px;}
   .bigbtn.coral{background:var(--coral); box-shadow:0 2px 8px rgba(216,90,48,.25);}
   .bigbtn.ghost{background:var(--card); color:var(--ink); border:1px solid var(--line); box-shadow:none; font-weight:700;}
@@ -84,7 +84,7 @@
   .sub{font-size:13.5px; color:var(--muted); margin-top:2px; font-weight:500;}
 
   .banner{display:flex; align-items:center; gap:12px; padding:14px 16px; border-radius:15px; margin:10px 0; font-weight:700;}
-  .banner.shop{background:linear-gradient(120deg,#0f6e56,#1d9e75); color:#fff;}
+  .banner.shop{background:linear-gradient(120deg,#5a3d2b,#7a5640); color:#fff;}
   .banner.shop .amt{margin-left:auto; text-align:right;}
   .banner.shop .amt b{font-size:22px; display:block;}
   .banner.shop .amt small{font-size:11px; opacity:.85;}
@@ -387,7 +387,7 @@ async function cloudPull(){
 }
 function setSync(state){
   const pill=$('#syncPill'),dot=$('#syncDot'),info=$('#syncInfo');
-  const map={saving:['Saving…','#8a887d'],ok:['Synced','#0f6e56'],err:['Offline','#d85a30'],off:['Local only','#8a887d']};
+  const map={saving:['Saving…','#988b7c'],ok:['Synced','#5a3d2b'],err:['Offline','#c4622f'],off:['Local only','#988b7c']};
   const [txt,col]=CLOUD?(map[state]||map.off):map.off;
   if(pill){pill.textContent=txt; pill.style.color=col;}
   if(dot) dot.style.color=col;

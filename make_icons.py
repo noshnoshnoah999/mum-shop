@@ -1,10 +1,10 @@
 #!/usr/bin/env python3
-"""App icon for 'Aisle Be There' — a bright shopping basket with colourful
-groceries poking out, on the brand green."""
+"""App icon for 'Supermarket Shopping' — a bright shopping basket with colourful
+groceries poking out, on the brand mocha brown."""
 from PIL import Image, ImageDraw
 
-GREEN = (29, 158, 117)
-DARK  = (15, 110, 86)
+GREEN = (122, 86, 64)   # brand mocha (var name kept for simplicity)
+DARK  = (90, 61, 43)
 WHITE = (255, 255, 255)
 # little grocery colours peeking out of the basket
 VEGGIES = [(99, 153, 34), (216, 90, 48), (224, 169, 59), (55, 138, 221), (214, 96, 138)]
