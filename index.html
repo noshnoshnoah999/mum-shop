@@ -6,161 +6,166 @@
 <meta name="theme-color" content="#1d9e75" />
 <meta name="apple-mobile-web-app-capable" content="yes" />
 <meta name="apple-mobile-web-app-status-bar-style" content="default" />
-<meta name="apple-mobile-web-app-title" content="Shopping" />
+<meta name="apple-mobile-web-app-title" content="Aisle Be There" />
 <link rel="manifest" href="manifest.json" />
 <link rel="apple-touch-icon" href="icon-180.png" />
-<title>Shopping</title>
+<title>Aisle Be There</title>
 <style>
   :root{
-    --bg:#f7f5ef; --card:#ffffff; --ink:#26251f; --muted:#86847a; --line:#e7e4d8;
+    --bg:#f6f4ec; --card:#ffffff; --ink:#23221c; --muted:#8a887d; --line:#e8e5d9;
     --accent:#1d9e75; --accent-d:#0f6e56; --accent-soft:#e1f5ee;
-    --coral:#d85a30; --warn:#fef0e6; --shadow:0 1px 2px rgba(0,0,0,.04);
-    --radius:14px; --tap:48px;
+    --coral:#d85a30; --warn:#fdf0e7; --gold:#bb8a1e;
+    --radius:16px; --tap:50px;
   }
   *{box-sizing:border-box; -webkit-tap-highlight-color:transparent;}
   html,body{margin:0; padding:0;}
   body{
     font-family:-apple-system,BlinkMacSystemFont,"Hiragino Sans","Helvetica Neue",Arial,sans-serif;
-    background:var(--bg); color:var(--ink); font-size:17px; line-height:1.4;
-    padding-bottom:calc(72px + env(safe-area-inset-bottom));
-    -webkit-font-smoothing:antialiased;
+    background:var(--bg); color:var(--ink); font-size:18px; line-height:1.4;
+    padding-bottom:calc(76px + env(safe-area-inset-bottom));
+    -webkit-font-smoothing:antialiased; overscroll-behavior-y:contain;
   }
-  .wrap{max-width:560px; margin:0 auto; padding:0 14px;}
-  header{
-    position:sticky; top:0; z-index:30; background:var(--bg);
-    padding:calc(10px + env(safe-area-inset-top)) 0 8px; display:flex; align-items:center; justify-content:space-between;
-  }
-  header h1{font-size:22px; margin:0; font-weight:700;}
-  .pill{font-size:13px; color:var(--muted); background:var(--card); border:1px solid var(--line); border-radius:999px; padding:5px 12px;}
-  .view{display:none;} .view.active{display:block; animation:fade .2s ease;}
-  @keyframes fade{from{opacity:0; transform:translateY(4px);} to{opacity:1; transform:none;}}
+  .wrap{max-width:580px; margin:0 auto; padding:0 14px;}
+  header{position:sticky; top:0; z-index:30; background:linear-gradient(var(--bg) 70%, rgba(246,244,236,0)); padding:calc(10px + env(safe-area-inset-top)) 0 6px;}
+  .hrow{display:flex; align-items:center; justify-content:space-between;}
+  header h1{font-size:26px; margin:0; font-weight:800; letter-spacing:-.02em;}
+  .datetime{font-size:13px; color:var(--muted); font-weight:600; margin-top:1px;}
+  .pill{font-size:12.5px; font-weight:700; color:var(--muted); background:var(--card); border:1px solid var(--line); border-radius:999px; padding:6px 12px; white-space:nowrap;}
+  .view{display:none;} .view.active{display:block; animation:fade .22s ease;}
+  @keyframes fade{from{opacity:0; transform:translateY(6px);} to{opacity:1; transform:none;}}
+  @keyframes pop{0%{transform:scale(.6);} 60%{transform:scale(1.15);} 100%{transform:scale(1);}}
+  @keyframes slideout{to{opacity:0; transform:translateX(40px); max-height:0; padding-top:0; padding-bottom:0; margin:0;}}
+  @keyframes rise{from{transform:translateY(40px); opacity:.5;} to{transform:none; opacity:1;}}
 
-  /* tab bar */
-  nav.tabs{
-    position:fixed; left:0; right:0; bottom:0; z-index:40;
-    background:rgba(255,255,255,.92); backdrop-filter:saturate(180%) blur(12px);
-    border-top:1px solid var(--line); display:flex;
-    padding-bottom:env(safe-area-inset-bottom);
-  }
-  nav.tabs button{
-    flex:1; background:none; border:0; padding:9px 0 7px; color:var(--muted);
-    font-size:11px; font-weight:600; display:flex; flex-direction:column; align-items:center; gap:3px; cursor:pointer;
-  }
-  nav.tabs button .ic{font-size:22px; line-height:1;}
-  nav.tabs button.on{color:var(--accent-d);}
+  nav.tabs{position:fixed; left:0; right:0; bottom:0; z-index:40; background:rgba(255,255,255,.94); backdrop-filter:saturate(180%) blur(14px); border-top:1px solid var(--line); display:flex; padding-bottom:env(safe-area-inset-bottom);}
+  nav.tabs button{flex:1; background:none; border:0; padding:10px 0 8px; color:var(--muted); font-size:11px; font-weight:700; display:flex; flex-direction:column; align-items:center; gap:3px; cursor:pointer; transition:.15s;}
+  nav.tabs button .ic{font-size:23px; line-height:1; transition:transform .15s;}
+  nav.tabs button.on{color:var(--accent-d);} nav.tabs button.on .ic{transform:translateY(-1px) scale(1.08);}
 
-  /* cards & sections */
-  .card{background:var(--card); border:1px solid var(--line); border-radius:var(--radius); box-shadow:var(--shadow);}
-  .sec-title{font-size:13px; font-weight:700; color:var(--muted); letter-spacing:.02em; margin:18px 4px 8px; display:flex; align-items:center; gap:7px;}
-  .sec-title .em{font-size:16px;}
+  .card{background:var(--card); border:1px solid var(--line); border-radius:var(--radius); box-shadow:0 1px 2px rgba(0,0,0,.04);}
+  .sec-title{font-size:13px; font-weight:800; color:var(--muted); letter-spacing:.04em; text-transform:uppercase; margin:20px 4px 8px; display:flex; align-items:center; gap:8px;}
+  .catchip{display:inline-flex; align-items:center; gap:7px; padding:6px 13px; border-radius:999px; font-size:15px; font-weight:800; margin:18px 0 8px;}
+  .catchip .em{font-size:17px;}
 
-  /* list items */
-  .row{display:flex; align-items:center; gap:11px; padding:11px 14px; border-bottom:1px solid var(--line); min-height:var(--tap);}
+  .row{display:flex; align-items:center; gap:12px; padding:13px 14px; border-bottom:1px solid var(--line); min-height:var(--tap); position:relative; transition:background .15s;}
   .row:last-child{border-bottom:0;}
-  .check{width:26px; height:26px; border-radius:8px; border:2px solid var(--line); flex:0 0 auto; display:flex; align-items:center; justify-content:center; color:#fff; font-size:16px; cursor:pointer; transition:.12s;}
-  .check.done{background:var(--accent); border-color:var(--accent);}
-  .row .name{flex:1; min-width:0; overflow:hidden; text-overflow:ellipsis;}
+  .row.removing{animation:slideout .35s ease forwards;}
+  .row .stripe{position:absolute; left:0; top:0; bottom:0; width:5px;}
+  .check{width:30px; height:30px; border-radius:9px; border:2.5px solid var(--line); flex:0 0 auto; display:flex; align-items:center; justify-content:center; color:#fff; font-size:18px; cursor:pointer; transition:.15s;}
+  .check.done{background:var(--accent); border-color:var(--accent); animation:pop .3s;}
+  .row .name{flex:1; min-width:0; font-weight:600;}
+  .row .name small{display:block; font-size:12px; color:var(--muted); font-weight:600;}
   .row.done .name{color:var(--muted); text-decoration:line-through;}
-  .qty{display:flex; align-items:center; gap:0; border:1px solid var(--line); border-radius:10px; overflow:hidden;}
-  .qty button{width:30px; height:32px; border:0; background:var(--card); font-size:18px; color:var(--accent-d); cursor:pointer;}
-  .qty span{min-width:26px; text-align:center; font-size:15px; font-variant-numeric:tabular-nums;}
-  .price{font-size:14px; color:var(--muted); font-variant-numeric:tabular-nums; min-width:48px; text-align:right; cursor:pointer; border:0; background:none; padding:4px;}
-  .price.noprice{color:var(--accent); }
-  .del{border:0; background:none; color:#c9c6ba; font-size:19px; cursor:pointer; padding:4px;}
+  .qtybtn{display:flex; align-items:center; gap:5px; border:1px solid var(--line); border-radius:11px; padding:6px 11px; background:var(--card); cursor:pointer; font-size:15px; font-weight:700; color:var(--ink); white-space:nowrap;}
+  .qtybtn small{color:var(--muted); font-weight:600;}
+  .price{font-size:15px; font-weight:700; color:var(--muted); font-variant-numeric:tabular-nums; min-width:50px; text-align:right; cursor:pointer; border:0; background:none; padding:5px 2px;}
+  .price.noprice{color:var(--accent); font-weight:700;}
+  .del{border:0; background:none; color:#cdcabe; font-size:20px; cursor:pointer; padding:5px;}
 
-  /* add bar */
-  .addbar{display:flex; gap:8px; margin:10px 0 4px;}
-  .addbar input{flex:1; height:var(--tap); border:1px solid var(--line); border-radius:12px; padding:0 14px; font-size:16px; background:var(--card); outline:none;}
-  .addbar input:focus{border-color:var(--accent);}
-  .addbar .go{width:var(--tap); height:var(--tap); border:0; border-radius:12px; background:var(--accent); color:#fff; font-size:24px; cursor:pointer; flex:0 0 auto;}
-  .chips{display:flex; flex-wrap:wrap; gap:7px; margin:4px 0 2px;}
-  .chip{background:var(--accent-soft); color:var(--accent-d); border:0; border-radius:999px; padding:8px 13px; font-size:14px; cursor:pointer; font-weight:600;}
-  .chip.add{background:var(--card); border:1px dashed var(--line); color:var(--muted); font-weight:500;}
+  .addbar{display:flex; gap:9px; margin:12px 0 6px;}
+  .addbar input{flex:1; height:var(--tap); border:1px solid var(--line); border-radius:13px; padding:0 15px; font-size:17px; background:var(--card); outline:none; font-weight:600;}
+  .addbar input:focus{border-color:var(--accent); box-shadow:0 0 0 3px var(--accent-soft);}
+  .addbar .go{width:var(--tap); height:var(--tap); border:0; border-radius:13px; background:var(--accent); color:#fff; font-size:27px; cursor:pointer; flex:0 0 auto; transition:transform .12s;}
+  .addbar .go:active{transform:scale(.92);}
+  .chips{display:flex; flex-wrap:wrap; gap:8px; margin:4px 0;}
+  .chip{background:var(--accent-soft); color:var(--accent-d); border:0; border-radius:999px; padding:9px 14px; font-size:15px; cursor:pointer; font-weight:700;}
+  .chip.out{background:var(--card); border:1px solid var(--line); color:var(--muted);}
 
-  /* toggle */
-  .toggle-row{display:flex; align-items:center; justify-content:space-between; padding:13px 14px;}
-  .sw{width:46px; height:28px; border-radius:999px; background:var(--line); position:relative; cursor:pointer; flex:0 0 auto; transition:.15s;}
+  .bigbtn{display:flex; align-items:center; justify-content:center; gap:9px; width:100%; height:58px; border:0; border-radius:15px; background:var(--accent); color:#fff; font-size:18px; font-weight:800; cursor:pointer; box-shadow:0 2px 8px rgba(29,158,117,.25); transition:transform .12s;}
+  .bigbtn:active{transform:scale(.98);} .bigbtn .ic{font-size:22px;}
+  .bigbtn.coral{background:var(--coral); box-shadow:0 2px 8px rgba(216,90,48,.25);}
+  .bigbtn.ghost{background:var(--card); color:var(--ink); border:1px solid var(--line); box-shadow:none; font-weight:700;}
+
+  .toggle-row{display:flex; align-items:center; justify-content:space-between; padding:14px;}
+  .sw{width:50px; height:30px; border-radius:999px; background:var(--line); position:relative; cursor:pointer; flex:0 0 auto; transition:.18s;}
   .sw.on{background:var(--accent);}
-  .sw b{position:absolute; top:3px; left:3px; width:22px; height:22px; border-radius:50%; background:#fff; transition:.15s; box-shadow:0 1px 2px rgba(0,0,0,.2);}
-  .sw.on b{left:21px;}
-  .sub{font-size:13px; color:var(--muted); margin-top:1px;}
+  .sw b{position:absolute; top:3px; left:3px; width:24px; height:24px; border-radius:50%; background:#fff; transition:.18s; box-shadow:0 1px 3px rgba(0,0,0,.25);}
+  .sw.on b{left:23px;}
+  .sub{font-size:13.5px; color:var(--muted); margin-top:2px; font-weight:500;}
 
-  /* total bar */
-  .totalbar{position:sticky; bottom:calc(72px + env(safe-area-inset-bottom)); margin:14px 0; }
-  .totalbar .card{display:flex; align-items:center; justify-content:space-between; padding:13px 16px;}
-  .totalbar .big{font-size:21px; font-weight:700; font-variant-numeric:tabular-nums;}
+  .banner{display:flex; align-items:center; gap:12px; padding:14px 16px; border-radius:15px; margin:10px 0; font-weight:700;}
+  .banner.shop{background:linear-gradient(120deg,#0f6e56,#1d9e75); color:#fff;}
+  .banner.shop .amt{margin-left:auto; text-align:right;}
+  .banner.shop .amt b{font-size:22px; display:block;}
+  .banner.shop .amt small{font-size:11px; opacity:.85;}
 
-  /* buttons */
-  .btn{display:inline-flex; align-items:center; justify-content:center; gap:7px; height:46px; padding:0 16px; border-radius:12px; border:1px solid var(--line); background:var(--card); color:var(--ink); font-size:15px; font-weight:600; cursor:pointer;}
-  .btn.primary{background:var(--accent); border-color:var(--accent); color:#fff;}
-  .btn.full{width:100%;}
-  .btn.ghost{background:none;}
-  .btn.danger{color:var(--coral); border-color:#f0d8cd;}
+  .req{display:flex; align-items:center; gap:12px; padding:12px 14px; border-bottom:1px solid var(--line);}
+  .req img{width:46px; height:46px; border-radius:10px; object-fit:cover; background:var(--bg);}
+  .req .rt{flex:1; font-weight:700; font-size:15px;} .req .rt small{display:block; color:var(--muted); font-weight:600; font-size:12px;}
+  .req .yn{display:flex; gap:7px;}
+  .req .yn button{width:42px; height:42px; border-radius:11px; border:0; font-size:19px; cursor:pointer; font-weight:800;}
+  .req .yn .y{background:var(--accent-soft); color:var(--accent-d);} .req .yn .n{background:var(--warn); color:var(--coral);}
 
-  /* planner */
-  .day{margin-bottom:10px;}
-  .day .dhead{display:flex; align-items:baseline; justify-content:space-between; padding:9px 14px 4px;}
-  .day .dname{font-weight:700;} .day .ddate{font-size:13px; color:var(--muted);}
-  .day.today{border:1.5px solid var(--accent);}
-  .planitem{display:flex; align-items:center; gap:9px; padding:9px 14px; border-top:1px solid var(--line);}
-  .planitem .pi{font-size:18px;}
-  .planitem .pname{flex:1;}
-  .planitem .pkind{font-size:12px; color:var(--muted);}
-  .addmini{padding:9px 14px; border-top:1px solid var(--line);}
-  .addmini button{background:none; border:0; color:var(--accent-d); font-size:15px; font-weight:600; cursor:pointer; padding:4px 0;}
+  .metric{display:grid; grid-template-columns:1fr 1fr; gap:10px;}
+  .metric .m{background:var(--card); border:1px solid var(--line); border-radius:14px; padding:14px;}
+  .metric .m .lbl{font-size:12.5px; color:var(--muted); font-weight:700;}
+  .metric .m .v{font-size:24px; font-weight:800; margin-top:3px; font-variant-numeric:tabular-nums;}
+  .metric .m .v.over{color:var(--coral);}
+  .bar{height:9px; border-radius:99px; background:var(--line); overflow:hidden; margin-top:9px;}
+  .bar b{display:block; height:100%; background:var(--accent); border-radius:99px; transition:width .4s;}
+  .bar b.over{background:var(--coral);}
 
-  /* meals */
-  .meal{padding:14px;}
+  .day{margin-bottom:11px;}
+  .day .dhead{display:flex; align-items:baseline; justify-content:space-between; padding:11px 14px 5px;}
+  .day .dname{font-weight:800;} .day .ddate{font-size:13px; color:var(--muted); font-weight:600;}
+  .day.today{border:2px solid var(--accent);} .day.today .dname{color:var(--accent-d);}
+  .planitem{display:flex; align-items:center; gap:10px; padding:10px 14px; border-top:1px solid var(--line);}
+  .planitem .pi{font-size:19px;} .planitem .pname{flex:1; font-weight:600;} .planitem .pkind{font-size:12px; color:var(--muted); font-weight:600;}
+  .addmini{padding:10px 14px; border-top:1px solid var(--line);}
+  .addmini button{background:none; border:0; color:var(--accent-d); font-size:15px; font-weight:800; cursor:pointer; padding:4px 0;}
+
+  .meal{padding:15px; margin-bottom:11px;}
   .meal .mtop{display:flex; align-items:center; justify-content:space-between;}
-  .meal .mname{font-weight:700; font-size:17px;}
-  .meal .ings{margin:8px 0 0; padding:0; list-style:none; display:flex; flex-wrap:wrap; gap:6px;}
-  .meal .ings li{font-size:13px; background:var(--bg); border:1px solid var(--line); border-radius:8px; padding:3px 9px;}
+  .meal .mname{font-weight:800; font-size:18px;}
+  .meal .ings{margin:9px 0 0; padding:0; list-style:none; display:flex; flex-wrap:wrap; gap:7px;}
+  .meal .ings li{font-size:13.5px; background:var(--bg); border:1px solid var(--line); border-radius:9px; padding:4px 10px; font-weight:600;}
 
-  /* settings */
-  .set-group{margin:8px 0 4px;}
-  .set-row{display:flex; align-items:center; justify-content:space-between; gap:10px; padding:13px 14px; border-bottom:1px solid var(--line);}
-  .set-row:last-child{border-bottom:0;}
-  .set-row .lbl{flex:1;}
-  .ordrow{display:flex; align-items:center; gap:10px; padding:11px 14px; border-bottom:1px solid var(--line);}
-  .ordrow:last-child{border-bottom:0;}
-  .ordrow .oname{flex:1;}
-  .ordrow .arr{display:flex; gap:4px;}
-  .ordrow .arr button{width:38px; height:38px; border:1px solid var(--line); background:var(--card); border-radius:9px; font-size:16px; cursor:pointer; color:var(--accent-d);}
-  .ordrow .arr button:disabled{opacity:.3;}
-  select, input[type=number]{font-size:16px; padding:8px 10px; border:1px solid var(--line); border-radius:10px; background:var(--card); color:var(--ink);}
+  .set-row{display:flex; align-items:center; justify-content:space-between; gap:10px; padding:14px; border-bottom:1px solid var(--line);}
+  .set-row:last-child{border-bottom:0;} .set-row .lbl{flex:1; font-weight:600;}
+  .ordrow{display:flex; align-items:center; gap:11px; padding:12px 14px; border-bottom:1px solid var(--line);}
+  .ordrow:last-child{border-bottom:0;} .ordrow .oname{flex:1; font-weight:700;}
+  .ordrow .arr{display:flex; gap:5px;}
+  .ordrow .arr button, .ordrow .xbtn{width:40px; height:40px; border:1px solid var(--line); background:var(--card); border-radius:10px; font-size:17px; cursor:pointer; color:var(--accent-d);}
+  .ordrow .xbtn{color:var(--coral);} .ordrow .arr button:disabled{opacity:.3;}
+  select,input[type=number],input[type=text]{font-size:16px; padding:9px 11px; border:1px solid var(--line); border-radius:11px; background:var(--card); color:var(--ink); font-weight:600;}
+  .role-pick{display:flex; gap:8px;} .role-pick button{flex:1; height:46px; border-radius:12px; border:1px solid var(--line); background:var(--card); font-weight:800; cursor:pointer;}
+  .role-pick button.on{background:var(--accent); color:#fff; border-color:var(--accent);}
 
-  /* modal */
-  .modal-bg{position:fixed; inset:0; background:rgba(20,18,12,.4); z-index:60; display:flex; align-items:flex-end; justify-content:center; padding:0;}
-  .modal{background:var(--card); width:100%; max-width:560px; border-radius:20px 20px 0 0; padding:18px 16px calc(18px + env(safe-area-inset-bottom)); max-height:88vh; overflow:auto; animation:up .22s ease;}
-  @keyframes up{from{transform:translateY(40px); opacity:.6;} to{transform:none; opacity:1;}}
-  .modal h2{margin:0 0 12px; font-size:19px;}
-  .modal label{display:block; font-size:13px; color:var(--muted); margin:12px 2px 5px; font-weight:600;}
-  .modal input[type=text], .modal input[type=number]{width:100%; height:46px; border:1px solid var(--line); border-radius:12px; padding:0 13px; font-size:16px; background:var(--card);}
+  .modal-bg{position:fixed; inset:0; background:rgba(20,18,12,.45); z-index:60; display:flex; align-items:flex-end; justify-content:center;}
+  .modal{background:var(--card); width:100%; max-width:580px; border-radius:22px 22px 0 0; padding:20px 16px calc(20px + env(safe-area-inset-bottom)); max-height:90vh; overflow:auto; animation:rise .24s ease;}
+  .modal.center{align-self:center; border-radius:22px; max-width:420px; margin:0 14px; text-align:center;}
+  .modal h2{margin:0 0 12px; font-size:21px; font-weight:800;}
+  .modal label{display:block; font-size:13px; color:var(--muted); margin:14px 2px 6px; font-weight:700;}
+  .modal input[type=text],.modal input[type=number]{width:100%; height:48px; border:1px solid var(--line); border-radius:13px; padding:0 14px; font-size:17px; background:var(--card); font-weight:600;}
   .ingedit{display:flex; gap:8px; margin-top:8px; align-items:center;}
-  .ingedit input.n{flex:1;}
-  .ingedit input.q{width:64px; text-align:center;}
-  .ingedit .x{border:0; background:none; color:#c9c6ba; font-size:20px; cursor:pointer;}
-  .empty{text-align:center; color:var(--muted); padding:40px 20px; font-size:15px;}
-  .empty .big{font-size:34px; display:block; margin-bottom:8px;}
+  .ingedit input.n{flex:1;} .ingedit input.q{width:62px; text-align:center;}
+  .ingedit .x{border:0; background:none; color:#cdcabe; font-size:21px; cursor:pointer;}
+  .empty{text-align:center; color:var(--muted); padding:44px 22px; font-weight:600;}
+  .empty .big{font-size:38px; display:block; margin-bottom:10px;}
   .hidden{display:none !important;}
-  .catcount{font-size:11px; color:var(--muted); background:var(--bg); border-radius:6px; padding:1px 6px; margin-left:auto;}
+  .donefold{margin:10px 0;}
+  .donefold summary{cursor:pointer; font-weight:700; color:var(--muted); padding:10px 4px; list-style:none; font-size:14px;}
+  .donefold summary::-webkit-details-marker{display:none;}
+  .checkout-emoji{font-size:64px; animation:pop .5s;}
 </style>
 </head>
 <body>
 <div class="wrap">
   <header>
-    <h1 id="viewTitle">Shopping list</h1>
-    <span class="pill" id="syncPill">…</span>
+    <div class="hrow">
+      <div><h1 id="viewTitle">Aisle Be There</h1><div class="datetime" id="datetime"></div></div>
+      <span class="pill" id="syncPill">…</span>
+    </div>
   </header>
 
   <!-- LIST -->
   <section id="view-list" class="view active">
-    <div class="card">
+    <div id="sessionZone"></div>
+    <div id="reqZone"></div>
+
+    <div class="card" id="aisleToggleCard">
       <div class="toggle-row">
-        <div>
-          <div data-t="aisleOrder">Walk the store in order</div>
-          <div class="sub" data-t="aisleSub">Sort by aisle for a big shop</div>
-        </div>
+        <div><div style="font-weight:700;" data-t="aisleOrder">Walk the store in order</div><div class="sub" data-t="aisleSub">Sort by aisle for a big shop</div></div>
         <div class="sw" id="aisleSw" role="switch" tabindex="0"><b></b></div>
       </div>
     </div>
@@ -169,75 +174,69 @@
       <input id="addInput" type="text" placeholder="Add an item…" autocomplete="off" enterkeyhint="done" />
       <button class="go" id="addBtn" aria-label="Add">+</button>
     </div>
-    <div class="chips" id="favChips"></div>
+    <div class="chips">
+      <button class="chip out" id="freqBtn">⭐ <span data-t="freqBtn">Frequently bought</span></button>
+      <span id="favChips" style="display:contents;"></span>
+    </div>
 
     <div id="listBody"></div>
+    <div id="doneZone"></div>
 
-    <div class="totalbar" id="totalBar">
-      <div class="card">
-        <div>
-          <div class="sub" data-t="estTotal">Estimated total</div>
-          <div class="big" id="totalAmt">¥0</div>
-        </div>
-        <button class="btn ghost" id="clearDone" data-t="clearDone">Clear ticked</button>
+    <div id="totalBar" style="margin:14px 0;">
+      <div class="card" style="display:flex; align-items:center; justify-content:space-between; padding:14px 16px;">
+        <div><div class="sub" data-t="estTotal">Estimated total</div><div style="font-size:22px; font-weight:800;" id="totalAmt">¥0</div></div>
+        <button class="bigbtn" style="width:auto; height:46px; padding:0 18px; font-size:16px;" id="checkoutBtn"><span data-t="checkout">Checkout</span> →</button>
       </div>
     </div>
   </section>
 
   <!-- PLAN -->
   <section id="view-plan" class="view">
+    <div id="budgetZone"></div>
+    <div class="sec-title" data-t="weekPlan">THIS WEEK'S MEALS</div>
     <div id="weekBody"></div>
-    <button class="btn primary full" id="buildListBtn" style="margin:6px 0 4px;">
-      <span class="ic">🛒</span><span data-t="buildList">Add planned meals to list</span>
-    </button>
-    <p class="sub" style="text-align:center; margin:8px 0 0;" data-t="buildHint">Ingredients get sorted into aisles automatically.</p>
+    <button class="bigbtn" id="buildListBtn" style="margin:8px 0;"><span class="ic">🛒</span><span data-t="buildList">Add planned meals to list</span></button>
+    <p class="sub" style="text-align:center;" data-t="buildHint">Ingredients sort into aisles automatically.</p>
   </section>
 
   <!-- MEALS -->
   <section id="view-meals" class="view">
-    <button class="btn primary full" id="newMealBtn" style="margin:4px 0 12px;">
-      <span class="ic">＋</span><span data-t="newMeal">Save a new meal</span>
-    </button>
+    <button class="bigbtn" id="newMealBtn" style="margin:4px 0 14px;"><span class="ic">＋</span><span data-t="newMeal">Save a new meal</span></button>
     <div id="mealsBody"></div>
   </section>
 
   <!-- SETTINGS -->
   <section id="view-set" class="view">
+    <div class="sec-title" data-t="whoTitle">WHO'S USING THIS PHONE</div>
+    <div class="card" style="padding:14px;"><div class="role-pick" id="rolePick"></div>
+      <p class="sub" style="margin:10px 2px 0;" data-t="whoSub">Items you add get tagged with your name so the family can see who added what.</p></div>
+
     <div class="sec-title" data-t="general">GENERAL</div>
-    <div class="card set-group">
-      <div class="set-row">
-        <span class="lbl" data-t="language">Language</span>
-        <select id="langSel"><option value="en">English</option><option value="ja">日本語</option></select>
-      </div>
-      <div class="set-row">
-        <span class="lbl" data-t="store">Store</span>
-        <input type="text" id="storeInp" style="width:55%; height:40px; border:1px solid var(--line); border-radius:10px; padding:0 10px; background:var(--card);" />
-      </div>
-      <div class="set-row">
-        <span class="lbl" data-t="currency">Currency</span>
-        <select id="curSel"><option value="¥">¥ Yen</option><option value="£">£ Pound</option><option value="$">$ Dollar</option><option value="€">€ Euro</option></select>
-      </div>
+    <div class="card">
+      <div class="set-row"><span class="lbl" data-t="language">Language</span><select id="langSel"><option value="en">English</option><option value="ja">日本語</option></select></div>
+      <div class="set-row"><span class="lbl" data-t="store">Store</span><input type="text" id="storeInp" style="width:52%;height:42px;" /></div>
+      <div class="set-row"><span class="lbl" data-t="currency">Currency</span><select id="curSel"><option value="¥">¥ Yen</option><option value="£">£ Pound</option><option value="$">$ Dollar</option><option value="€">€ Euro</option></select></div>
+      <div class="set-row"><span class="lbl" data-t="monthBudget">This month's budget</span><span style="display:flex;align-items:center;gap:5px;font-weight:700;"><span id="curSym2">¥</span><input type="number" id="budgetInp" min="0" style="width:110px;height:42px;text-align:right;" /></span></div>
     </div>
 
-    <div class="sec-title" data-t="aisleSetTitle">AISLE ORDER <span class="sub" style="font-weight:500; text-transform:none; margin-left:6px;" data-t="aisleSetSub">— match your store's layout</span></div>
+    <div class="sec-title"><span data-t="aisleSetTitle">AISLES</span></div>
     <div class="card" id="catOrderBody"></div>
+    <button class="bigbtn ghost" id="addAisleBtn" style="margin-top:10px;"><span class="ic">＋</span><span data-t="addAisle">Add an aisle</span></button>
 
     <div class="sec-title" data-t="pricesTitle">SAVED PRICES</div>
     <div class="card" id="priceBody"></div>
 
     <div class="sec-title" data-t="syncTitle">SYNC & DATA</div>
-    <div class="card set-group">
+    <div class="card">
       <div class="set-row"><span class="lbl"><span data-t="cloud">Cloud sync</span><div class="sub" id="syncInfo"></div></span><span id="syncDot">●</span></div>
-      <div class="set-row"><span class="lbl" data-t="shareCode">Share code (same on both phones)</span></div>
-      <div class="set-row" style="padding-top:0;"><input type="text" id="shareInp" style="width:100%; height:40px; border:1px solid var(--line); border-radius:10px; padding:0 10px; background:var(--card); font-size:13px; font-family:monospace;" /></div>
-      <div class="set-row"><button class="btn ghost full" id="reloadBtn" data-t="reloadCloud">Reload from cloud</button></div>
-      <div class="set-row"><button class="btn danger full" id="resetBtn" data-t="reset">Reset everything</button></div>
+      <div class="set-row" style="display:block;"><span class="lbl" data-t="shareCode">Share code (same on both phones)</span><input type="text" id="shareInp" style="width:100%;height:42px;margin-top:8px;font-family:monospace;font-size:13px;" /></div>
+      <div class="set-row"><button class="bigbtn ghost" id="reloadBtn" data-t="reloadCloud">Reload from cloud</button></div>
+      <div class="set-row"><button class="bigbtn ghost" style="color:var(--coral);border-color:#f0d8cd;" id="resetBtn" data-t="reset">Reset everything</button></div>
     </div>
-    <p class="sub" style="text-align:center; margin:14px 0;">Shopping · v1</p>
+    <p class="sub" style="text-align:center; margin:16px 0;">Aisle Be There · v2</p>
   </section>
 </div>
 
-<!-- tab bar -->
 <nav class="tabs">
   <button data-tab="list" class="on"><span class="ic">🛒</span><span data-t="tabList">List</span></button>
   <button data-tab="plan"><span class="ic">📅</span><span data-t="tabPlan">Plan</span></button>
@@ -249,359 +248,537 @@
 
 <script>
 /* ============================================================
-   Shopping — single-file PWA (mirrors the Nudge stack)
-   localStorage-first, syncs to the shared Supabase project.
+   Aisle Be There — shopping PWA (single file, mirrors Nudge).
+   localStorage-first, syncs to shared Supabase (shop_data).
    ============================================================ */
-
-/* ---------- Supabase (shared project, isolated table: shop_data) ---------- */
 const SUPABASE = {
-  url:  'https://epaiazxcdcseijkhrncm.supabase.co',
-  anon: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImVwYWlhenhjZGNzZWlqa2hybmNtIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzcwMjQ0MzQsImV4cCI6MjA5MjYwMDQzNH0.h2t_kFLZ_YPvuJlzPPiyXVbOnW4Ub_52hdaYosMoOus'
+  url:'https://epaiazxcdcseijkhrncm.supabase.co',
+  anon:'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImVwYWlhenhjZGNzZWlqa2hybmNtIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzcwMjQ0MzQsImV4cCI6MjA5MjYwMDQzNH0.h2t_kFLZ_YPvuJlzPPiyXVbOnW4Ub_52hdaYosMoOus'
 };
-/* Both phones use the SAME share code to see one shared list. */
-const DEFAULT_KEY = 'shop-mum-7c1e2f04';
-const CLOUD = !!(SUPABASE.url && SUPABASE.anon);
-const LS_KEY = 'shopping_state_v1';
+const DEFAULT_KEY='shop-mum-7c1e2f04';
+const CLOUD=!!(SUPABASE.url&&SUPABASE.anon);
+const LS_KEY='shopping_state_v1';
+const ROLE_KEY='shop_role';   // per-device identity (not synced)
 
-/* ---------- categories (the aisle walk) ---------- */
-const CATS = [
-  { id:'produce',   en:'Produce',        ja:'青果',         em:'🥬' },
-  { id:'fish',      en:'Fish & seafood', ja:'鮮魚',         em:'🐟' },
-  { id:'meat',      en:'Meat',           ja:'精肉',         em:'🥩' },
-  { id:'deli',      en:'Deli',           ja:'惣菜・デリカ',  em:'🍱' },
-  { id:'bakery',    en:'Bakery',         ja:'ベーカリー',    em:'🍞' },
-  { id:'tofu',      en:'Tofu & fishcake',ja:'豆腐・練り物',  em:'🍢' },
-  { id:'dairy',     en:'Dairy & eggs',   ja:'乳製品・卵',    em:'🥚' },
-  { id:'grocery',   en:'Dry goods',      ja:'グロッサリー',  em:'🍙' },
-  { id:'seasoning', en:'Seasonings',     ja:'調味料',        em:'🧂' },
-  { id:'snacks',    en:'Snacks',         ja:'お菓子',        em:'🍪' },
-  { id:'drinks',    en:'Drinks & drink', ja:'飲料・酒',      em:'🧃' },
-  { id:'frozen',    en:'Frozen',         ja:'冷凍食品',      em:'🧊' },
-  { id:'household', en:'Household',      ja:'日用品',        em:'🧻' },
-  { id:'other',     en:'Other',          ja:'その他',        em:'📦' }
+/* ---------- default aisles (id, names, emoji, colour) ---------- */
+const DEFAULT_CATS=[
+  {id:'produce',  en:'Produce',        ja:'青果',        em:'🥬', color:'#639922'},
+  {id:'fish',     en:'Fish & seafood', ja:'鮮魚',        em:'🐟', color:'#378add'},
+  {id:'meat',     en:'Meat',           ja:'精肉',        em:'🥩', color:'#d4537e'},
+  {id:'deli',     en:'Deli',           ja:'惣菜・デリカ', em:'🍱', color:'#ba7517'},
+  {id:'bakery',   en:'Bakery',         ja:'ベーカリー',   em:'🍞', color:'#bb8a1e'},
+  {id:'tofu',     en:'Tofu & fishcake',ja:'豆腐・練り物', em:'🍢', color:'#0f9b8e'},
+  {id:'dairy',    en:'Dairy & eggs',   ja:'乳製品・卵',   em:'🥚', color:'#e0a93b'},
+  {id:'grocery',  en:'Dry goods',      ja:'グロッサリー', em:'🍙', color:'#c2731b'},
+  {id:'seasoning',en:'Seasonings',     ja:'調味料',       em:'🧂', color:'#7f77dd'},
+  {id:'snacks',   en:'Snacks',         ja:'お菓子',       em:'🍪', color:'#d6608a'},
+  {id:'drinks',   en:'Drinks',         ja:'飲料・酒',     em:'🧃', color:'#1d9e9e'},
+  {id:'frozen',   en:'Frozen',         ja:'冷凍食品',     em:'🧊', color:'#3fa7d6'},
+  {id:'household',en:'Household',      ja:'日用品',       em:'🧻', color:'#8a887d'},
+  {id:'other',    en:'Other',          ja:'その他',       em:'📦', color:'#9b9a8f'}
 ];
-
-/* ---------- categorisation dictionary (EN + romaji + 日本語) ---------- */
-/* Checked top-to-bottom; first keyword match wins. Order resolves overlaps
-   (e.g. frozen before snacks for アイス, deli before fish for 寿司). */
-const RULES = [
-  ['household', ['tissue','toilet','kitchen paper','detergent','soap','shampoo','conditioner','sponge','wrap','foil','battery','batteries','bin bag','trash','cleaner','bleach','laundry','ティッシュ','トイレット','洗剤','石鹸','せっけん','シャンプー','スポンジ','ラップ','ホイル','電池','日用品','洗濯','掃除','ゴミ袋','ごみ袋','柔軟剤']],
-  ['frozen',    ['frozen','ice cream','icecream','gelato','冷凍','アイス','冷食','冷凍餃子']],
-  ['drinks',    ['water','tea','juice','coffee','cola','coke','soda','beer','wine','sake','whisky','whiskey','liquor','drink','juice','水','お茶','緑茶','麦茶','ジュース','コーヒー','コーラ','炭酸','ビール','ワイン','日本酒','焼酎','お酒','酒','飲料','ドリンク']],
-  ['seasoning', ['salt','soy sauce','soy','shoyu','miso','mirin','vinegar','oil','sauce','ketchup','mayo','mayonnaise','dressing','dashi','stock','spice','curry roux','roux','honey','jam','塩','醤油','しょうゆ','味噌','みそ','みりん','酢','油','サラダ油','ごま油','ソース','ケチャップ','マヨ','ドレッシング','だし','出汁','胡椒','こしょう','砂糖','さとう','調味料','香辛料','スパイス','ルー','はちみつ','蜂蜜','ジャム']],
-  ['dairy',     ['milk','egg','eggs','cheese','butter','yoghurt','yogurt','cream','margarine','牛乳','卵','たまご','玉子','チーズ','バター','ヨーグルト','生クリーム','乳製品','マーガリン']],
-  ['tofu',      ['tofu','natto','aburaage','atsuage','konnyaku','konjac','chikuwa','kamaboko','hanpen','fishcake','豆腐','納豆','厚揚げ','油揚げ','こんにゃく','蒟蒻','ちくわ','かまぼこ','はんぺん','練り物','がんも']],
-  ['bakery',    ['bread','baguette','croissant','roll','toast','bagel','muffin','pastry','パン','食パン','バゲット','クロワッサン','ロールパン','トースト','ベーグル']],
-  ['deli',      ['bento','lunchbox','prepared','deli','croquette','korokke','karaage','fried chicken','tempura','potato salad','prepared salad','惣菜','弁当','コロッケ','からあげ','唐揚げ','天ぷら','てんぷら','お寿司','寿司','サラダ','デリ','焼き鳥','焼鳥']],
-  ['fish',      ['fish','salmon','tuna','mackerel','sardine','shrimp','prawn','squid','octopus','clam','oyster','scallop','sashimi','seafood','crab','あじ','アジ','さば','サバ','鮭','さけ','まぐろ','マグロ','いか','イカ','たこ','タコ','えび','エビ','刺身','魚','ぶり','ブリ','ホタテ','あさり','かに','カニ','しらす','たら','鱈']],
-  ['meat',      ['meat','beef','pork','chicken','mince','minced','ground','bacon','ham','sausage','wiener','frankfurt','lamb','steak','thigh','breast','fillet','肉','牛','豚','鶏','とり','ひき肉','挽き肉','ささみ','もも','むね','バラ','ステーキ','ベーコン','ハム','ソーセージ','ウインナー','ウィンナー','ラム']],
-  ['snacks',    ['snack','chocolate','choco','chips','crisps','cookie','biscuit','candy','sweets','gum','cracker','senbei','nuts','popcorn','お菓子','おかし','チョコ','ポテチ','スナック','クッキー','ビスケット','あめ','飴','ガム','せんべい','煎餅','おやつ','ナッツ','ポップコーン','グミ']],
-  ['grocery',   ['rice','noodle','noodles','pasta','spaghetti','ramen','udon','soba','flour','cereal','oats','granola','canned','can ','tin','beans','nori','seaweed','konbu','furikake','tea bag','米','お米','ごはん','麺','めん','パスタ','スパゲ','ラーメン','うどん','そば','蕎麦','小麦粉','粉','缶詰','シリアル','グラノーラ','海苔','のり','昆布','乾物','豆','ふりかけ','レトルト','カップ麺']],
-  ['produce',   ['vegetable','veg','fruit','tomato','onion','potato','carrot','cabbage','lettuce','spinach','cucumber','pepper','capsicum','garlic','ginger','mushroom','broccoli','apple','banana','orange','lemon','lime','strawberry','grape','avocado','corn','beansprout','leek','daikon','eggplant','aubergine','pumpkin','sweet potato','野菜','果物','フルーツ','トマト','玉ねぎ','たまねぎ','じゃがいも','ジャガイモ','人参','にんじん','ニンジン','キャベツ','レタス','ほうれん草','きゅうり','キュウリ','ピーマン','にんにく','ニンニク','しょうが','生姜','きのこ','しめじ','エリンギ','まいたけ','しいたけ','ブロッコリー','りんご','リンゴ','バナナ','みかん','レモン','いちご','イチゴ','ぶどう','アボカド','とうもろこし','コーン','もやし','ねぎ','長ねぎ','大根','なす','ナス','かぼちゃ','さつまいも','ブルーベリー','キウイ','梨','桃']]
+const RULES=[
+  ['household',['tissue','toilet','kitchen paper','detergent','soap','shampoo','conditioner','sponge','wrap','foil','battery','batteries','bin bag','trash','cleaner','bleach','laundry','ティッシュ','トイレット','洗剤','石鹸','せっけん','シャンプー','スポンジ','ラップ','ホイル','電池','日用品','洗濯','掃除','ゴミ袋','ごみ袋','柔軟剤']],
+  ['frozen',['frozen','ice cream','icecream','gelato','冷凍','アイス','冷食','冷凍餃子']],
+  ['drinks',['water','tea','juice','coffee','cola','coke','soda','beer','wine','sake','whisky','whiskey','liquor','drink','水','お茶','緑茶','麦茶','ジュース','コーヒー','コーラ','炭酸','ビール','ワイン','日本酒','焼酎','お酒','酒','飲料','ドリンク']],
+  ['seasoning',['salt','soy sauce','soy','shoyu','miso','mirin','vinegar','oil','sauce','ketchup','mayo','mayonnaise','dressing','dashi','stock','spice','curry roux','roux','honey','jam','塩','醤油','しょうゆ','味噌','みそ','みりん','酢','油','サラダ油','ごま油','ソース','ケチャップ','マヨ','ドレッシング','だし','出汁','胡椒','こしょう','砂糖','さとう','調味料','香辛料','ルー','はちみつ','蜂蜜','ジャム']],
+  ['dairy',['milk','egg','eggs','cheese','butter','yoghurt','yogurt','cream','margarine','牛乳','卵','たまご','玉子','チーズ','バター','ヨーグルト','生クリーム','乳製品','マーガリン']],
+  ['tofu',['tofu','natto','aburaage','atsuage','konnyaku','konjac','chikuwa','kamaboko','hanpen','fishcake','豆腐','納豆','厚揚げ','油揚げ','こんにゃく','蒟蒻','ちくわ','かまぼこ','はんぺん','練り物','がんも']],
+  ['bakery',['bread','baguette','croissant','roll','toast','bagel','muffin','pastry','パン','食パン','バゲット','クロワッサン','ロールパン','トースト','ベーグル']],
+  ['deli',['bento','lunchbox','prepared','deli','croquette','korokke','karaage','fried chicken','tempura','potato salad','惣菜','弁当','コロッケ','からあげ','唐揚げ','天ぷら','てんぷら','お寿司','寿司','サラダ','デリ','焼き鳥','焼鳥']],
+  ['fish',['fish','salmon','tuna','mackerel','sardine','shrimp','prawn','squid','octopus','clam','oyster','scallop','sashimi','seafood','crab','あじ','アジ','さば','サバ','鮭','さけ','まぐろ','マグロ','いか','イカ','たこ','タコ','えび','エビ','刺身','魚','ぶり','ブリ','ホタテ','あさり','かに','カニ','しらす','たら','鱈']],
+  ['meat',['meat','beef','pork','chicken','mince','minced','ground','bacon','ham','sausage','wiener','frankfurt','lamb','steak','thigh','breast','fillet','肉','牛','豚','鶏','とり','ひき肉','挽き肉','ささみ','もも','むね','バラ','ステーキ','ベーコン','ハム','ソーセージ','ウインナー','ウィンナー','ラム']],
+  ['snacks',['snack','chocolate','choco','chips','crisps','cookie','biscuit','candy','sweets','gum','cracker','senbei','nuts','popcorn','お菓子','おかし','チョコ','ポテチ','スナック','クッキー','ビスケット','あめ','飴','ガム','せんべい','煎餅','おやつ','ナッツ','グミ']],
+  ['grocery',['rice','noodle','noodles','pasta','spaghetti','ramen','udon','soba','flour','cereal','oats','granola','canned','tin','beans','nori','seaweed','konbu','furikake','米','お米','ごはん','麺','めん','パスタ','スパゲ','ラーメン','うどん','そば','蕎麦','小麦粉','粉','缶詰','シリアル','グラノーラ','海苔','のり','昆布','乾物','豆','ふりかけ','レトルト','カップ麺']],
+  ['produce',['vegetable','veg','fruit','tomato','onion','potato','carrot','cabbage','lettuce','spinach','cucumber','pepper','capsicum','garlic','ginger','mushroom','broccoli','apple','banana','orange','lemon','lime','strawberry','grape','avocado','corn','beansprout','leek','daikon','eggplant','aubergine','pumpkin','野菜','果物','フルーツ','トマト','玉ねぎ','たまねぎ','じゃがいも','ジャガイモ','人参','にんじん','ニンジン','キャベツ','レタス','ほうれん草','きゅうり','キュウリ','ピーマン','にんにく','ニンニク','しょうが','生姜','きのこ','しめじ','エリンギ','しいたけ','ブロッコリー','りんご','リンゴ','バナナ','みかん','レモン','いちご','イチゴ','ぶどう','アボカド','とうもろこし','コーン','もやし','ねぎ','長ねぎ','大根','なす','ナス','かぼちゃ','さつまいも','キウイ','梨','桃']]
 ];
+/* default pack/bottle units for some items */
+const UNIT_GUESS=[
+  [['egg','卵','たまご'],'pack'], [['milk','牛乳'],'bottle'], [['water','水','juice','ジュース','cola','コーラ','beer','ビール','wine','soda'],'bottle'],
+  [['yoghurt','ヨーグルト','natto','納豆','tofu','豆腐'],'pack'], [['rice','米','flour','小麦粉','sugar','砂糖'],'bag'], [['bread','食パン','パン'],'loaf']
+];
+const UNITS=['each','pack','bottle','bag','loaf','can','box','g','kg','ml','L'];
+const UNIT_JA={each:'個',pack:'パック',bottle:'本',bag:'袋',loaf:'斤',can:'缶',box:'箱',g:'g',kg:'kg',ml:'ml',L:'L'};
 
 /* ---------- state ---------- */
-let S = null;
+let S=null, ROLE=null, pollTimer=null, clockTimer=null;
 function blank(){
   return {
-    list: [],                 // {id,name,qty,checked,cat}
-    catalog: {},              // norm(name) -> {name,cat,price,lastPrice,fav}
-    meals: {},                // id -> {id,name,ings:[{name,qty}]}
-    plan: {},                 // dateISO -> [{type:'meal'|'item', name, mealId, qty}]
-    catOrder: CATS.map(c=>c.id),
-    overrides: {},            // norm(name) -> catId  (learned corrections)
-    settings: { aisle:true, lang:'en', currency:'¥', store:'ヤオコー新浦安店', shareKey: DEFAULT_KEY },
-    updatedAt: 0
+    list:[], catalog:{}, meals:{}, plan:{}, overrides:{},
+    cats: DEFAULT_CATS.map(c=>({...c})),
+    catOrder: DEFAULT_CATS.map(c=>c.id),
+    requests:[], spend:[], session:null,
+    settings:{ aisle:true, lang:'en', currency:'¥', store:'ヤオコー新浦安店', shareKey:DEFAULT_KEY, monthlyBudget:0,
+               members:[{name:'Mum',role:'primary'},{name:'Noah',role:'secondary'}] },
+    updatedAt:0
   };
 }
-
-/* ---------- helpers ---------- */
-const $ = (s,r=document)=>r.querySelector(s);
-const $$ = (s,r=document)=>[...r.querySelectorAll(s)];
-const norm = s => (s||'').trim().toLowerCase().replace(/\s+/g,' ');
-const uid = ()=> Date.now().toString(36)+Math.random().toString(36).slice(2,7);
-const esc = s => (s||'').replace(/[&<>"]/g, c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
-const cur = ()=> S.settings.currency;
-const money = n => cur() + (Math.round(n||0)).toLocaleString();
-function catObj(id){ return CATS.find(c=>c.id===id) || CATS[CATS.length-1]; }
-function catName(id){ const c=catObj(id); return S.settings.lang==='ja'? c.ja : c.en; }
+const $=(s,r=document)=>r.querySelector(s);
+const $$=(s,r=document)=>[...r.querySelectorAll(s)];
+const norm=s=>(s||'').trim().toLowerCase().replace(/\s+/g,' ');
+const uid=()=>Date.now().toString(36)+Math.random().toString(36).slice(2,7);
+const esc=s=>(s||'').replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const cur=()=>S.settings.currency;
+const money=n=>cur()+(Math.round(n||0)).toLocaleString();
+function catObj(id){ return (S.cats||DEFAULT_CATS).find(c=>c.id===id)||(S.cats||DEFAULT_CATS).find(c=>c.id==='other'); }
+function catName(id){ const c=catObj(id); return S.settings.lang==='ja'?(c.ja||c.en):c.en; }
+function hexA(hex,a){ const n=parseInt(hex.slice(1),16); return `rgba(${n>>16&255},${n>>8&255},${n&255},${a})`; }
+function guessUnit(name){ const n=norm(name); for(const [kws,u] of UNIT_GUESS){ if(kws.some(k=>n.includes(k))) return u; } return 'each'; }
+function unitLabel(u,q){ if(['g','kg','ml','L'].includes(u)) return u; return S.settings.lang==='ja'?UNIT_JA[u]:(q>1?u+'s':u); }
 
 function categorize(name){
-  const n = norm(name);
-  if(!n) return 'other';
+  const n=norm(name); if(!n) return 'other';
   if(S.overrides[n]) return S.overrides[n];
-  for(const [cat,kws] of RULES){
-    for(const kw of kws){ if(n.includes(kw)) return cat; }
-  }
+  const live=new Set((S.cats||DEFAULT_CATS).filter(c=>!c.hidden).map(c=>c.id));
+  for(const [cat,kws] of RULES){ if(!live.has(cat)) continue; for(const kw of kws){ if(n.includes(kw)) return cat; } }
   return 'other';
 }
 
 /* ---------- i18n ---------- */
-const I18N = {
-  en:{ aisleOrder:'Walk the store in order', aisleSub:'Sort by aisle for a big shop', estTotal:'Estimated total', clearDone:'Clear ticked',
-    buildList:'Add planned meals to list', buildHint:'Ingredients get sorted into aisles automatically.', newMeal:'Save a new meal',
-    general:'GENERAL', language:'Language', store:'Store', currency:'Currency', aisleSetTitle:'AISLE ORDER', aisleSetSub:"— match your store's layout",
-    pricesTitle:'SAVED PRICES', syncTitle:'SYNC & DATA', cloud:'Cloud sync', shareCode:'Share code (same on both phones)',
-    reloadCloud:'Reload from cloud', reset:'Reset everything', tabList:'List', tabPlan:'Plan', tabMeals:'Meals', tabSet:'Settings',
-    titleList:'Shopping list', titlePlan:'Meal planner', titleMeals:'Saved meals', titleSet:'Settings' },
-  ja:{ aisleOrder:'売り場の順に並べる', aisleSub:'まとめ買いはアイル順で', estTotal:'合計（目安）', clearDone:'チェック済みを消す',
-    buildList:'献立の材料をリストに追加', buildHint:'材料は自動で売り場ごとに並びます。', newMeal:'献立を保存',
-    general:'一般', language:'言語', store:'お店', currency:'通貨', aisleSetTitle:'売り場の順番', aisleSetSub:'— お店の並びに合わせて',
-    pricesTitle:'保存した値段', syncTitle:'同期・データ', cloud:'クラウド同期', shareCode:'共有コード（2台で同じに）',
-    reloadCloud:'クラウドから再読込', reset:'すべてリセット', tabList:'リスト', tabPlan:'献立', tabMeals:'献立集', tabSet:'設定',
-    titleList:'買い物リスト', titlePlan:'週間献立', titleMeals:'保存した献立', titleSet:'設定' }
+const I18N={
+  en:{aisleOrder:'Walk the store in order',aisleSub:'Sort by aisle for a big shop',estTotal:'Estimated total',checkout:'Checkout',
+    buildList:'Add planned meals to list',buildHint:'Ingredients sort into aisles automatically.',newMeal:'Save a new meal',freqBtn:'Frequently bought',
+    weekPlan:"THIS WEEK'S MEALS",general:'GENERAL',language:'Language',store:'Store',currency:'Currency',monthBudget:"This month's budget",
+    whoTitle:"WHO'S USING THIS PHONE",whoSub:'Items you add get tagged with your name so the family can see who added what.',
+    aisleSetTitle:'AISLES',addAisle:'Add an aisle',pricesTitle:'SAVED PRICES',syncTitle:'SYNC & DATA',cloud:'Cloud sync',shareCode:'Share code (same on both phones)',
+    reloadCloud:'Reload from cloud',reset:'Reset everything',tabList:'List',tabPlan:'Plan',tabMeals:'Meals',tabSet:'Settings',
+    titleList:'Aisle Be There',titlePlan:'Meal planner',titleMeals:'Saved meals',titleSet:'Settings'},
+  ja:{aisleOrder:'売り場の順に並べる',aisleSub:'まとめ買いはアイル順で',estTotal:'合計（目安）',checkout:'お会計',
+    buildList:'献立の材料をリストに追加',buildHint:'材料は自動で売り場ごとに並びます。',newMeal:'献立を保存',freqBtn:'よく買う物',
+    weekPlan:'今週の献立',general:'一般',language:'言語',store:'お店',currency:'通貨',monthBudget:'今月の予算',
+    whoTitle:'この端末を使う人',whoSub:'追加した品にはあなたの名前が付き、家族が誰が追加したか分かります。',
+    aisleSetTitle:'売り場',addAisle:'売り場を追加',pricesTitle:'保存した値段',syncTitle:'同期・データ',cloud:'クラウド同期',shareCode:'共有コード（2台で同じに）',
+    reloadCloud:'クラウドから再読込',reset:'すべてリセット',tabList:'リスト',tabPlan:'献立',tabMeals:'献立集',tabSet:'設定',
+    titleList:'Aisle Be There',titlePlan:'週間献立',titleMeals:'保存した献立',titleSet:'設定'}
 };
-function applyLang(){
-  const L = I18N[S.settings.lang] || I18N.en;
-  $$('[data-t]').forEach(el=>{ const k=el.getAttribute('data-t'); if(L[k]!=null) el.textContent=L[k]; });
-  $('#addInput').placeholder = S.settings.lang==='ja' ? '商品を追加…' : 'Add an item…';
-  document.documentElement.lang = S.settings.lang;
-}
 function T(k){ return (I18N[S.settings.lang]||I18N.en)[k]; }
+function applyLang(){
+  const L=I18N[S.settings.lang]||I18N.en;
+  $$('[data-t]').forEach(el=>{const k=el.getAttribute('data-t'); if(L[k]!=null) el.textContent=L[k];});
+  $('#addInput').placeholder=S.settings.lang==='ja'?'商品を追加…':'Add an item…';
+  document.documentElement.lang=S.settings.lang;
+}
 
-/* ---------- persistence ---------- */
+/* ---------- persistence + sync ---------- */
 let saveTimer=null;
 function save(push=true){
-  S.updatedAt = Date.now();
-  try{ localStorage.setItem(LS_KEY, JSON.stringify(S)); }catch(e){}
-  // rotating local backup (guards against bad syncs)
-  try{ localStorage.setItem(LS_KEY+'_bak', JSON.stringify(S)); }catch(e){}
-  if(push && CLOUD){ clearTimeout(saveTimer); saveTimer=setTimeout(cloudPush, 700); }
+  S.updatedAt=Date.now();
+  try{localStorage.setItem(LS_KEY,JSON.stringify(S));}catch(e){}
+  try{localStorage.setItem(LS_KEY+'_bak',JSON.stringify(S));}catch(e){}
+  if(push&&CLOUD){clearTimeout(saveTimer); saveTimer=setTimeout(cloudPush,600);}
 }
-function loadLocal(){
-  try{ const raw=localStorage.getItem(LS_KEY); if(raw) return JSON.parse(raw); }catch(e){}
-  return null;
-}
+function loadLocal(){ try{const r=localStorage.getItem(LS_KEY); if(r) return JSON.parse(r);}catch(e){} return null; }
 async function cloudPush(){
-  if(!CLOUD) return;
-  setSync('saving');
+  if(!CLOUD) return; setSync('saving');
   try{
-    const key = S.settings.shareKey || DEFAULT_KEY;
-    const res = await fetch(`${SUPABASE.url}/rest/v1/shop_data?on_conflict=user_key`,{
-      method:'POST',
-      headers:{ apikey:SUPABASE.anon, Authorization:`Bearer ${SUPABASE.anon}`, 'Content-Type':'application/json', Prefer:'resolution=merge-duplicates' },
-      body: JSON.stringify({ user_key:key, data:S, updated_at:new Date().toISOString() })
-    });
-    setSync(res.ok ? 'ok' : 'err');
-  }catch(e){ setSync('err'); }
+    const res=await fetch(`${SUPABASE.url}/rest/v1/shop_data?on_conflict=user_key`,{
+      method:'POST',headers:{apikey:SUPABASE.anon,Authorization:`Bearer ${SUPABASE.anon}`,'Content-Type':'application/json',Prefer:'resolution=merge-duplicates'},
+      body:JSON.stringify({user_key:S.settings.shareKey||DEFAULT_KEY,data:S,updated_at:new Date().toISOString()})});
+    setSync(res.ok?'ok':'err');
+  }catch(e){setSync('err');}
 }
 async function cloudPull(){
   if(!CLOUD) return null;
   try{
-    const key = S.settings.shareKey || DEFAULT_KEY;
-    const res = await fetch(`${SUPABASE.url}/rest/v1/shop_data?user_key=eq.${encodeURIComponent(key)}&select=data`,{
-      headers:{ apikey:SUPABASE.anon, Authorization:`Bearer ${SUPABASE.anon}` }
-    });
-    if(!res.ok) return null;
-    const rows = await res.json();
-    return rows[0] && rows[0].data ? rows[0].data : null;
+    const res=await fetch(`${SUPABASE.url}/rest/v1/shop_data?user_key=eq.${encodeURIComponent(S.settings.shareKey||DEFAULT_KEY)}&select=data`,
+      {headers:{apikey:SUPABASE.anon,Authorization:`Bearer ${SUPABASE.anon}`}});
+    if(!res.ok) return null; const rows=await res.json(); return rows[0]&&rows[0].data?rows[0].data:null;
   }catch(e){ return null; }
 }
 function setSync(state){
-  const pill=$('#syncPill'), dot=$('#syncDot'), info=$('#syncInfo');
-  const map={ saving:['Saving…','#86847a'], ok:['Synced','#0f6e56'], err:['Offline','#d85a30'], off:['Local only','#86847a'] };
-  const [txt,col]= CLOUD ? (map[state]||map.off) : map.off;
-  if(pill){ pill.textContent=txt; pill.style.color=col; }
+  const pill=$('#syncPill'),dot=$('#syncDot'),info=$('#syncInfo');
+  const map={saving:['Saving…','#8a887d'],ok:['Synced','#0f6e56'],err:['Offline','#d85a30'],off:['Local only','#8a887d']};
+  const [txt,col]=CLOUD?(map[state]||map.off):map.off;
+  if(pill){pill.textContent=txt; pill.style.color=col;}
   if(dot) dot.style.color=col;
-  if(info) info.textContent = CLOUD ? (S.settings.shareKey||DEFAULT_KEY) : 'Add Supabase keys to enable';
+  if(info) info.textContent=CLOUD?(S.settings.shareKey||DEFAULT_KEY):'Add Supabase keys to enable';
 }
 
-/* ---------- LIST view ---------- */
-function addItem(rawName, qty=1, fromPlan=false){
+/* ---------- ITEMS ---------- */
+function addItem(rawName,qty=1,fromPlan=false,opts={}){
   const name=(rawName||'').trim(); if(!name) return;
-  const cat=categorize(name);
-  const n=norm(name);
-  // merge with existing unchecked same-name item
-  const ex = S.list.find(it=> norm(it.name)===n && !it.checked);
-  if(ex){ ex.qty += qty; }
-  else { S.list.push({ id:uid(), name, qty, checked:false, cat }); }
-  // remember in catalog
-  if(!S.catalog[n]) S.catalog[n]={ name, cat, price:0, lastPrice:0, fav:false };
+  const n=norm(name); const cat=opts.cat||categorize(name);
+  const cc=S.catalog[n];
+  const unit=opts.unit||(cc&&cc.unit)||guessUnit(name);
+  const ex=S.list.find(it=>norm(it.name)===n&&!it.checked);
+  if(ex){ ex.qty+=qty; }
+  else { S.list.push({id:uid(),name,qty,unit,cat,checked:false,addedBy:ROLE||'',addedAt:Date.now()}); }
+  if(!cc) S.catalog[n]={name,cat,price:0,lastPrice:0,unit,fav:false,count:0};
+  S.catalog[n].count=(S.catalog[n].count||0)+1;
   if(!fromPlan) save();
 }
-function setQty(id,d){ const it=S.list.find(x=>x.id===id); if(!it) return; it.qty=Math.max(1,it.qty+d); save(); renderList(); }
-function toggleCheck(id){ const it=S.list.find(x=>x.id===id); if(!it) return; it.checked=!it.checked; save(); renderList(); }
+function setQty(it,q,unit){ it.qty=Math.max(1,Math.round(q*10)/10); if(unit) it.unit=unit; const c=S.catalog[norm(it.name)]; if(c&&unit) c.unit=unit; save(); renderList(); }
 function delItem(id){ S.list=S.list.filter(x=>x.id!==id); save(); renderList(); }
-function setPrice(id,val){
-  const it=S.list.find(x=>x.id===id); if(!it) return;
-  const p=Math.max(0, Math.round(parseFloat(val)||0));
-  const n=norm(it.name);
-  const c=S.catalog[n]||(S.catalog[n]={name:it.name,cat:it.cat,price:0,lastPrice:0,fav:false});
-  if(c.price && c.price!==p) c.lastPrice=c.price;
+function setPrice(it,val){
+  const p=Math.max(0,Math.round(parseFloat(val)||0)); const n=norm(it.name);
+  const c=S.catalog[n]||(S.catalog[n]={name:it.name,cat:it.cat,price:0,lastPrice:0,unit:it.unit,fav:false,count:0});
+  if(c.price&&c.price!==p) c.lastPrice=c.price;
   c.price=p; it.price=p; save();
 }
+let lastTick=null;
+function toggleCheck(it,rowEl){
+  it.checked=!it.checked; it.checkedAt=it.checked?Date.now():0;
+  if(it.checked){
+    lastTick=it.id;
+    if(rowEl){ rowEl.querySelector('.check').classList.add('done'); rowEl.classList.add('removing');
+      setTimeout(()=>{save(); renderList(); showUndo(it);},340); return; }
+  }
+  save(); renderList();
+}
+function showUndo(it){
+  toast((S.settings.lang==='ja'?'チェック：':'Ticked: ')+it.name, S.settings.lang==='ja'?'戻す':'Undo', ()=>{
+    const t=S.list.find(x=>x.id===it.id); if(t){t.checked=false; t.checkedAt=0; save(); renderList();}
+  });
+}
 
+function priceOf(it){ const c=S.catalog[norm(it.name)]; return (c&&c.price)||it.price||0; }
+function rowEl(it){
+  const c=catObj(it.cat); const price=priceOf(it);
+  const row=document.createElement('div'); row.className='row'+(it.checked?' done':'');
+  const stripe=document.createElement('div'); stripe.className='stripe'; stripe.style.background=c.color; row.appendChild(stripe);
+  const chk=document.createElement('div'); chk.className='check'+(it.checked?' done':''); chk.textContent=it.checked?'✓':'';
+  chk.onclick=()=>toggleCheck(it,row);
+  const name=document.createElement('div'); name.className='name';
+  const who=(it.addedBy&&ROLE&&it.addedBy!==ROLE)?`<small>${S.settings.lang==='ja'?'追加：':'added by '}${esc(it.addedBy)}</small>`:'';
+  name.innerHTML=esc(it.name)+who; name.onclick=()=>openItemMenu(it);
+  const qty=document.createElement('button'); qty.className='qtybtn';
+  qty.innerHTML=`${it.qty} <small>${esc(unitLabel(it.unit||'each',it.qty))}</small>`;
+  qty.onclick=()=>openQty(it);
+  const pr=document.createElement('button'); pr.className='price'+(price?'':' noprice');
+  pr.textContent=price?money(price):(S.settings.lang==='ja'?'値段':'price');
+  pr.onclick=()=>openPrice(it);
+  const del=document.createElement('button'); del.className='del'; del.textContent='×'; del.onclick=()=>delItem(it.id);
+  row.append(chk,name,qty,pr,del); return row;
+}
 function renderList(){
   const body=$('#listBody'); body.innerHTML='';
-  $('#aisleSw').classList.toggle('on', !!S.settings.aisle);
-  // favourites chips
-  const favs=Object.values(S.catalog).filter(c=>c.fav).slice(0,12);
+  $('#aisleSw').classList.toggle('on',!!S.settings.aisle);
+  // favourites (top frequently/starred)
   const fc=$('#favChips'); fc.innerHTML='';
-  favs.forEach(f=>{ const b=document.createElement('button'); b.className='chip'; b.textContent=f.name;
-    b.onclick=()=>{ addItem(f.name,1); renderList(); }; fc.appendChild(b); });
+  Object.values(S.catalog).filter(c=>c.fav).slice(0,8).forEach(f=>{
+    const b=document.createElement('button'); b.className='chip'; b.textContent=f.name;
+    b.onclick=()=>{addItem(f.name,1); renderList(); flashAdd();}; fc.appendChild(b);});
 
-  if(!S.list.length){
+  const active=S.list.filter(it=>!it.checked);
+  const done=S.list.filter(it=>it.checked);
+
+  if(!active.length&&!done.length){
     body.innerHTML=`<div class="empty"><span class="big">🛒</span>${S.settings.lang==='ja'?'リストは空です。上から追加してください。':'Your list is empty. Add something above.'}</div>`;
-    updTotal(); return;
-  }
-
-  if(S.settings.aisle){
-    // group by category, in aisle order
-    const order=S.catOrder.length?S.catOrder:CATS.map(c=>c.id);
+  } else if(S.settings.aisle){
+    const order=(S.catOrder||[]).filter(id=>!catObj(id).hidden||S.list.some(it=>it.cat===id&&!it.checked));
     order.forEach(cid=>{
-      const items=S.list.filter(it=>it.cat===cid);
-      if(!items.length) return;
+      const items=active.filter(it=>it.cat===cid); if(!items.length) return;
       const c=catObj(cid);
-      const h=document.createElement('div'); h.className='sec-title';
-      h.innerHTML=`<span class="em">${c.em}</span>${esc(catName(cid))}`;
+      const h=document.createElement('div'); h.className='catchip';
+      h.style.background=hexA(c.color,.14); h.style.color=c.color;
+      h.innerHTML=`<span class="em">${c.em}</span>${esc(catName(cid))} <span style="opacity:.7;font-weight:700;">·${items.length}</span>`;
       body.appendChild(h);
       const card=document.createElement('div'); card.className='card';
-      items.forEach(it=>card.appendChild(rowEl(it)));
-      body.appendChild(card);
+      items.forEach(it=>card.appendChild(rowEl(it))); body.appendChild(card);
     });
   } else {
-    // plain order = as added
     const card=document.createElement('div'); card.className='card';
-    S.list.forEach(it=>card.appendChild(rowEl(it)));
-    body.appendChild(card);
+    active.forEach(it=>card.appendChild(rowEl(it))); body.appendChild(card);
   }
-  updTotal();
+  // done (ticked, hidden by default)
+  const dz=$('#doneZone'); dz.innerHTML='';
+  if(done.length){
+    const d=document.createElement('details'); d.className='donefold';
+    d.innerHTML=`<summary>✓ ${S.settings.lang==='ja'?'チェック済み':'Ticked'} (${done.length}) ▾</summary>`;
+    const card=document.createElement('div'); card.className='card';
+    done.forEach(it=>card.appendChild(rowEl(it))); d.appendChild(card);
+    const clr=document.createElement('button'); clr.className='bigbtn ghost'; clr.style.margin='10px 0';
+    clr.textContent=S.settings.lang==='ja'?'チェック済みを消す':'Clear ticked items';
+    clr.onclick=()=>{S.list=S.list.filter(x=>!x.checked); save(); renderList();};
+    d.appendChild(clr); dz.appendChild(d);
+  }
+  renderSession(); renderRequests(); updTotal();
 }
-function rowEl(it){
-  const n=norm(it.name);
-  const price = (S.catalog[n] && S.catalog[n].price) || it.price || 0;
-  const row=document.createElement('div'); row.className='row'+(it.checked?' done':'');
-  const chk=document.createElement('div'); chk.className='check'+(it.checked?' done':''); chk.textContent=it.checked?'✓':'';
-  chk.onclick=()=>toggleCheck(it.id);
-  const name=document.createElement('div'); name.className='name'; name.textContent=it.name;
-  name.onclick=()=>openItemMenu(it);
-  const qty=document.createElement('div'); qty.className='qty';
-  qty.innerHTML=`<button aria-label="less">−</button><span>${it.qty}</span><button aria-label="more">＋</button>`;
-  qty.children[0].onclick=()=>setQty(it.id,-1); qty.children[2].onclick=()=>setQty(it.id,1);
-  const pr=document.createElement('button'); pr.className='price'+(price?'':' noprice');
-  pr.textContent= price? money(price) : (S.settings.lang==='ja'?'値段':'price');
-  pr.onclick=()=>{ const v=prompt((S.settings.lang==='ja'?'値段 ':'Price for ')+it.name, price||''); if(v!=null){ setPrice(it.id,v); renderList(); } };
-  const del=document.createElement('button'); del.className='del'; del.textContent='×'; del.onclick=()=>delItem(it.id);
-  row.append(chk,name,qty,pr,del);
-  return row;
-}
+function flashAdd(){ const i=$('#addInput'); }
 function updTotal(){
-  const sum=S.list.reduce((a,it)=>{ const p=(S.catalog[norm(it.name)]&&S.catalog[norm(it.name)].price)||0; return a+p*it.qty; },0);
+  const sum=S.list.reduce((a,it)=>a+priceOf(it)*it.qty,0);
   $('#totalAmt').textContent=money(sum);
-  $('#totalBar').classList.toggle('hidden', !S.list.length);
+  $('#totalBar').classList.toggle('hidden',!S.list.length);
+}
+
+/* ---------- quantity / price / item editors ---------- */
+function openQty(it){
+  const uopts=UNITS.map(u=>`<option value="${u}" ${u===(it.unit||'each')?'selected':''}>${esc(S.settings.lang==='ja'?UNIT_JA[u]:u)}</option>`).join('');
+  openModal(`<h2>${esc(it.name)}</h2>
+    <label>${S.settings.lang==='ja'?'数量':'Quantity'}</label>
+    <div style="display:flex;gap:10px;align-items:center;">
+      <button class="qtybtn" id="q_minus" style="font-size:22px;width:54px;justify-content:center;">−</button>
+      <input type="number" id="q_val" inputmode="decimal" value="${it.qty}" style="flex:1;text-align:center;font-size:22px;font-weight:800;">
+      <button class="qtybtn" id="q_plus" style="font-size:22px;width:54px;justify-content:center;">＋</button>
+    </div>
+    <label>${S.settings.lang==='ja'?'単位（パック・本など）':'Unit (pack, bottle, g…)'}</label>
+    <select id="q_unit" style="width:100%;height:48px;">${uopts}</select>
+    <button class="bigbtn" id="q_save" style="margin-top:16px;">${S.settings.lang==='ja'?'保存':'Save'}</button>`,()=>{
+    const v=$('#q_val');
+    $('#q_minus').onclick=()=>v.value=Math.max(1,(parseFloat(v.value)||1)-1);
+    $('#q_plus').onclick=()=>v.value=(parseFloat(v.value)||0)+1;
+    $('#q_save').onclick=()=>{setQty(it,parseFloat(v.value)||1,$('#q_unit').value); closeModal();};
+  });
+}
+function openPrice(it){
+  openModal(`<h2>${esc(it.name)}</h2>
+    <label>${S.settings.lang==='ja'?'値段':'Price'} (${cur()})</label>
+    <input type="number" id="p_val" inputmode="decimal" value="${priceOf(it)||''}" placeholder="0" style="font-size:24px;font-weight:800;text-align:right;">
+    <p class="sub" style="margin:8px 2px;">${S.settings.lang==='ja'?'値段は保存され、次回から自動で出ます。':'Saved and pre-filled next time you buy it.'}</p>
+    <button class="bigbtn" id="p_save" style="margin-top:8px;">${S.settings.lang==='ja'?'保存':'Save'}</button>`,()=>{
+    const v=$('#p_val'); setTimeout(()=>v.focus(),60);
+    $('#p_save').onclick=()=>{setPrice(it,v.value); closeModal(); renderList();};
+    v.addEventListener('keydown',e=>{if(e.key==='Enter')$('#p_save').click();});
+  });
 }
 function openItemMenu(it){
-  const cid=it.cat;
-  const opts=CATS.map(c=>`<option value="${c.id}" ${c.id===cid?'selected':''}>${c.em} ${esc(catName(c.id))}</option>`).join('');
   const n=norm(it.name); const fav=(S.catalog[n]&&S.catalog[n].fav);
-  openModal(`
-    <h2>${esc(it.name)}</h2>
-    <label>${S.settings.lang==='ja'?'売り場':'Aisle / category'}</label>
-    <select id="m_cat" style="width:100%;height:46px;border:1px solid var(--line);border-radius:12px;padding:0 10px;background:var(--card);">${opts}</select>
-    <p class="sub" style="margin:6px 2px;">${S.settings.lang==='ja'?'変更すると、この商品はいつもこの売り場になります。':"Change it and this item is remembered in that aisle from now on."}</p>
-    <div class="set-row" style="padding:12px 0;"><span class="lbl">${S.settings.lang==='ja'?'お気に入り':'Favourite (quick-add)'}</span>
-      <div class="sw ${fav?'on':''}" id="m_fav"><b></b></div></div>
-    <button class="btn primary full" id="m_save" style="margin-top:6px;">${S.settings.lang==='ja'?'保存':'Save'}</button>
-  `, ()=>{
+  const opts=(S.cats||DEFAULT_CATS).filter(c=>!c.hidden).map(c=>`<option value="${c.id}" ${c.id===it.cat?'selected':''}>${c.em} ${esc(catName(c.id))}</option>`).join('');
+  openModal(`<h2>${esc(it.name)}</h2>
+    <label>${S.settings.lang==='ja'?'売り場':'Aisle'}</label>
+    <select id="m_cat" style="width:100%;height:48px;">${opts}</select>
+    <p class="sub" style="margin:6px 2px;">${S.settings.lang==='ja'?'変えると、この品はいつもこの売り場になります。':'Remembered in that aisle from now on.'}</p>
+    <div class="set-row" style="padding:14px 0;"><span class="lbl">${S.settings.lang==='ja'?'よく買う物に追加':'Add to favourites'}</span><div class="sw ${fav?'on':''}" id="m_fav"><b></b></div></div>
+    <button class="bigbtn" id="m_save">${S.settings.lang==='ja'?'保存':'Save'}</button>`,()=>{
     $('#m_fav').onclick=()=>$('#m_fav').classList.toggle('on');
     $('#m_save').onclick=()=>{
-      const newCat=$('#m_cat').value;
-      it.cat=newCat; S.overrides[n]=newCat;
-      const c=S.catalog[n]||(S.catalog[n]={name:it.name,cat:newCat,price:0,lastPrice:0,fav:false});
-      c.cat=newCat; c.fav=$('#m_fav').classList.contains('on');
-      // update other list items with same name
-      S.list.forEach(x=>{ if(norm(x.name)===n) x.cat=newCat; });
+      const nc=$('#m_cat').value; it.cat=nc; S.overrides[n]=nc;
+      const c=S.catalog[n]||(S.catalog[n]={name:it.name,cat:nc,price:0,lastPrice:0,unit:it.unit,fav:false,count:0});
+      c.cat=nc; c.fav=$('#m_fav').classList.contains('on');
+      S.list.forEach(x=>{if(norm(x.name)===n)x.cat=nc;});
       save(); closeModal(); renderList();
     };
   });
 }
 
-/* ---------- PLAN view ---------- */
-function weekDates(){
-  const out=[]; const d=new Date(); d.setHours(0,0,0,0);
-  for(let i=0;i<7;i++){ const x=new Date(d); x.setDate(d.getDate()+i); out.push(x); }
-  return out;
+/* ---------- frequently bought ---------- */
+function openFreq(){
+  const items=Object.values(S.catalog).sort((a,b)=>(b.count||0)-(a.count||0)).slice(0,40);
+  if(!items.length){ openModal(`<h2>${S.settings.lang==='ja'?'よく買う物':'Frequently bought'}</h2><p class="empty">${S.settings.lang==='ja'?'買い物をすると、ここによく買う物が出ます。':'As you shop, your regulars show up here to tick.'}</p>`); return; }
+  const onList=new Set(S.list.filter(i=>!i.checked).map(i=>norm(i.name)));
+  const rows=items.map(c=>`<label class="set-row" style="cursor:pointer;"><span class="lbl">${esc(c.name)} <span class="sub">${esc(catName(c.cat))}${c.count?' · ×'+c.count:''}</span></span>
+    <input type="checkbox" data-n="${esc(c.name)}" ${onList.has(norm(c.name))?'checked disabled':''} style="width:24px;height:24px;"></label>`).join('');
+  openModal(`<h2>${S.settings.lang==='ja'?'よく買う物':'Frequently bought'}</h2>
+    <p class="sub" style="margin:0 2px 8px;">${S.settings.lang==='ja'?'入れたい物にチェック。':'Tick what you want on the list.'}</p>
+    <div class="card">${rows}</div>
+    <button class="bigbtn" id="f_add" style="margin-top:14px;">${S.settings.lang==='ja'?'リストに追加':'Add ticked to list'}</button>`,()=>{
+    $('#f_add').onclick=()=>{ let n=0; $$('#modalRoot input[type=checkbox]:checked:not([disabled])').forEach(cb=>{addItem(cb.getAttribute('data-n'),1,true); n++;});
+      if(n){save(); renderList();} closeModal(); if(n) toast((S.settings.lang==='ja'?'追加：':'Added ')+n); };
+  });
 }
-const iso = d => d.toISOString().slice(0,10);
-function dayName(d){
-  const en=['Sun','Mon','Tue','Wed','Thu','Fri','Sat'], ja=['日','月','火','水','木','金','土'];
-  return S.settings.lang==='ja'? ('日月火水木金土'[d.getDay()]+'曜') : ['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'][d.getDay()];
+
+/* ---------- SHOPPING SESSION ---------- */
+function renderSession(){
+  const z=$('#sessionZone'); z.innerHTML='';
+  if(S.session&&S.session.active){
+    $('#aisleToggleCard').classList.add('hidden');
+    const mi=monthInfo();
+    const spent=S.list.filter(i=>i.checked).reduce((a,it)=>a+priceOf(it)*it.qty,0);
+    const est=S.list.reduce((a,it)=>a+priceOf(it)*it.qty,0);
+    const b=document.createElement('div'); b.className='banner shop';
+    b.innerHTML=`<span style="font-size:24px;">🛒</span>
+      <div><div>${S.session.type==='quick'?(S.settings.lang==='ja'?'クイック買い物':'Quick shop'):(S.settings.lang==='ja'?'週まとめ買い':'Weekly shop')}</div>
+        <small style="opacity:.85;">${S.list.filter(i=>i.checked).length}/${S.list.length} ${S.settings.lang==='ja'?'個':'done'}${mi.budget?' · '+(S.settings.lang==='ja'?'今週予算 ':'wk budget ')+money(mi.weekBudget):''}</small></div>
+      <div class="amt"><b>${money(spent)}</b><small>${S.settings.lang==='ja'?'目安 ':'est '}${money(est)}</small></div>`;
+    z.appendChild(b);
+    const fin=document.createElement('button'); fin.className='bigbtn coral'; fin.style.margin='0 0 6px';
+    fin.innerHTML=`<span class="ic">🏁</span>${S.settings.lang==='ja'?'お会計へ進む':'Finish & checkout'}`;
+    fin.onclick=finishShop; z.appendChild(fin);
+  } else {
+    $('#aisleToggleCard').classList.remove('hidden');
+    const start=document.createElement('button'); start.className='bigbtn'; start.style.margin='2px 0 4px';
+    start.innerHTML=`<span class="ic">▶️</span>${S.settings.lang==='ja'?'買い物をはじめる':'Start shopping'}`;
+    start.onclick=startShopPrompt; z.appendChild(start);
+  }
 }
+function startShopPrompt(){
+  // ask for missing details first
+  const needStore=!(S.settings.store||'').trim();
+  const needBudget=!S.settings.monthlyBudget;
+  openModal(`<h2>${S.settings.lang==='ja'?'買い物をはじめる':'Start shopping'}</h2>
+    ${needStore?`<label>${S.settings.lang==='ja'?'お店の名前':'Which store?'}</label><input type="text" id="s_store" value="${esc(S.settings.store||'')}" placeholder="${esc('ヤオコー新浦安店')}">`:''}
+    ${needBudget?`<label>${S.settings.lang==='ja'?'今月の予算 ':"This month's budget "}(${cur()})</label><input type="number" id="s_budget" inputmode="numeric" placeholder="0">`:''}
+    <label>${S.settings.lang==='ja'?'買い物の種類':'What kind of shop?'}</label>
+    <div style="display:flex;gap:10px;margin-top:4px;">
+      <button class="bigbtn" id="s_weekly" style="flex-direction:column;height:auto;padding:16px 8px;"><span style="font-size:26px;">🗓️</span>${S.settings.lang==='ja'?'週まとめ買い':'Weekly shop'}<small style="font-weight:600;opacity:.85;">${S.settings.lang==='ja'?'アイル順で表示':'sorted by aisle'}</small></button>
+      <button class="bigbtn ghost" id="s_quick" style="flex-direction:column;height:auto;padding:16px 8px;"><span style="font-size:26px;">⚡</span>${S.settings.lang==='ja'?'クイック買い物':'Quick shop'}<small style="font-weight:600;opacity:.7;">${S.settings.lang==='ja'?'並べ替えなし':'simple list'}</small></button>
+    </div>`,()=>{
+    const begin=(type)=>{
+      if(needStore&&$('#s_store')) S.settings.store=$('#s_store').value.trim();
+      if(needBudget&&$('#s_budget')) S.settings.monthlyBudget=Math.max(0,Math.round(parseFloat($('#s_budget').value)||0));
+      S.settings.aisle=(type==='weekly');
+      S.session={active:true,type,startedAt:Date.now()};
+      save(); closeModal(); renderList(); startPolling();
+      toast(type==='weekly'?(S.settings.lang==='ja'?'週まとめ買いを開始':'Weekly shop started'):(S.settings.lang==='ja'?'クイック買い物を開始':'Quick shop started'));
+    };
+    $('#s_weekly').onclick=()=>begin('weekly');
+    $('#s_quick').onclick=()=>begin('quick');
+  });
+}
+function finishShop(){
+  const spent=S.list.filter(i=>i.checked).reduce((a,it)=>a+priceOf(it)*it.qty,0);
+  const est=S.list.reduce((a,it)=>a+priceOf(it)*it.qty,0);
+  S.spend.push({at:Date.now(),total:spent||est,type:S.session?S.session.type:'weekly'});
+  S.session=null; stopPolling(); save();
+  openModal(`<div class="checkout-emoji">🏁</div>
+    <h2>${S.settings.lang==='ja'?'お会計へどうぞ！':'Head to checkout!'}</h2>
+    <div class="sub" style="margin-bottom:4px;">${S.settings.lang==='ja'?'お会計の目安':'Estimated total'}</div>
+    <div style="font-size:40px;font-weight:800;">${money(est)}</div>
+    <p class="sub" style="margin:14px 0;">${S.settings.lang==='ja'?'お疲れさま！レジでこの金額くらいになります。':'Nice work! Your basket should come to about this.'}</p>
+    <button class="bigbtn" id="co_done">${S.settings.lang==='ja'?'完了':'Done'}</button>`,()=>{
+    $('#co_done').onclick=()=>{closeModal(); renderList(); switchTab('list');};
+  },true);
+}
+
+/* ---------- requests ("Can you get this?") ---------- */
+function renderRequests(){
+  const z=$('#reqZone'); z.innerHTML='';
+  const isPrimary=(ROLE==='Mum'||ROLE==='Primary'||!ROLE);
+  // secondary: show a button to ask
+  if(!isPrimary){
+    const b=document.createElement('button'); b.className='bigbtn ghost'; b.style.margin='2px 0 6px';
+    b.innerHTML=`<span class="ic">📸</span>${S.settings.lang==='ja'?'「これ買える？」と頼む':'Ask: "Can you get this?"'}`;
+    b.onclick=openAskRequest; z.appendChild(b);
+  }
+  const pend=(S.requests||[]).filter(r=>r.status==='pending');
+  if(pend.length&&isPrimary){
+    const card=document.createElement('div'); card.className='card'; card.style.marginBottom='8px';
+    const head=document.createElement('div'); head.className='catchip'; head.style.cssText='background:var(--warn);color:var(--coral);margin:0;border-radius:16px 16px 0 0;width:100%;padding:11px 14px;';
+    head.innerHTML=`<span class="em">🙋</span>${S.settings.lang==='ja'?'家族からのお願い':'Family requests'} ·${pend.length}`;
+    card.appendChild(head);
+    pend.forEach(r=>{
+      const row=document.createElement('div'); row.className='req';
+      row.innerHTML=`${r.photo?`<img src="${r.photo}" alt="">`:'<div style="width:46px;height:46px;border-radius:10px;background:var(--bg);display:flex;align-items:center;justify-content:center;font-size:22px;">🛒</div>'}
+        <div class="rt">${esc(r.text)}<small>${esc(r.from||'family')} · ${timeAgo(r.at)}</small></div>
+        <div class="yn"><button class="y" title="yes">✓</button><button class="n" title="no">×</button></div>`;
+      row.querySelector('.y').onclick=()=>{addItem(r.text,1); r.status='yes'; save(); renderList(); toast(S.settings.lang==='ja'?'リストに追加しました':'Added to your list');};
+      row.querySelector('.n').onclick=()=>{r.status='no'; save(); renderList();};
+      card.appendChild(row);
+    });
+    z.appendChild(card);
+  }
+  // secondary: show status of own recent requests
+  if(!isPrimary){
+    const mine=(S.requests||[]).filter(r=>r.from===ROLE&&r.status!=='pending').slice(-3);
+    mine.forEach(r=>{
+      const t=document.createElement('div'); t.className='sub'; t.style.margin='2px 4px';
+      t.textContent=`${r.status==='yes'?'✅':'❌'} ${r.text} — ${r.status==='yes'?(S.settings.lang==='ja'?'入れてくれました':'Mum got it'):(S.settings.lang==='ja'?'今回はなし':'not this time')}`;
+      z.appendChild(t);
+    });
+  }
+}
+function openAskRequest(){
+  openModal(`<h2>${S.settings.lang==='ja'?'これ買える？':'Can you get this?'}</h2>
+    <label>${S.settings.lang==='ja'?'ほしい物':'What do you want?'}</label>
+    <input type="text" id="r_text" placeholder="${S.settings.lang==='ja'?'例：いちご':'e.g. Strawberries'}">
+    <label>${S.settings.lang==='ja'?'写真（任意）':'Photo (optional)'}</label>
+    <input type="file" accept="image/*" capture="environment" id="r_photo" style="font-size:14px;">
+    <div id="r_prev" style="margin-top:10px;"></div>
+    <button class="bigbtn" id="r_send" style="margin-top:14px;"><span class="ic">📨</span>${S.settings.lang==='ja'?'お母さんに送る':'Send to Mum'}</button>`,()=>{
+    let photoData='';
+    $('#r_photo').onchange=async e=>{ const f=e.target.files[0]; if(!f) return; photoData=await shrinkImage(f); $('#r_prev').innerHTML=`<img src="${photoData}" style="width:90px;height:90px;border-radius:12px;object-fit:cover;">`; };
+    $('#r_send').onclick=()=>{ const t=$('#r_text').value.trim(); if(!t){toast(S.settings.lang==='ja'?'品名を入れてください':'Type an item');return;}
+      S.requests=S.requests||[]; S.requests.push({id:uid(),text:t,photo:photoData,from:ROLE||'Noah',status:'pending',at:Date.now()});
+      save(); closeModal(); renderList(); toast(S.settings.lang==='ja'?'送りました！':'Sent to Mum!'); };
+  });
+}
+function shrinkImage(file){
+  return new Promise(res=>{ const img=new Image(); const r=new FileReader();
+    r.onload=()=>{ img.onload=()=>{ const max=520; let{width:w,height:h}=img; if(w>h&&w>max){h=h*max/w;w=max;} else if(h>max){w=w*max/h;h=max;}
+      const cv=document.createElement('canvas'); cv.width=w; cv.height=h; cv.getContext('2d').drawImage(img,0,0,w,h);
+      res(cv.toDataURL('image/jpeg',0.55)); }; img.src=r.result; };
+    r.readAsDataURL(file); });
+}
+
+/* ---------- BUDGET ---------- */
+function monthInfo(){
+  const now=new Date(),y=now.getFullYear(),m=now.getMonth();
+  const spentMonth=(S.spend||[]).filter(s=>{const d=new Date(s.at);return d.getFullYear()===y&&d.getMonth()===m;}).reduce((a,s)=>a+s.total,0);
+  const dim=new Date(y,m+1,0).getDate(); const daysLeft=dim-now.getDate()+1; const weeksLeft=Math.max(1,Math.ceil(daysLeft/7));
+  const budget=S.settings.monthlyBudget||0; const remaining=budget-spentMonth;
+  const weekBudget=budget?Math.max(0,Math.round(remaining/weeksLeft)):0;
+  const weekAgo=Date.now()-7*864e5; const lastWeek=(S.spend||[]).filter(s=>s.at>=weekAgo).reduce((a,s)=>a+s.total,0);
+  return {budget,spentMonth,remaining,weekBudget,weeksLeft,lastWeek};
+}
+function renderBudget(){
+  const z=$('#budgetZone'); z.innerHTML=''; const mi=monthInfo();
+  if(!mi.budget){
+    const c=document.createElement('div'); c.className='card'; c.style.padding='16px';
+    c.innerHTML=`<div style="font-weight:700;">${S.settings.lang==='ja'?'予算を設定しましょう':'Set a monthly budget'}</div><p class="sub" style="margin:6px 0 0;">${S.settings.lang==='ja'?'設定すると今週・今月の予算がここに出ます。':'Add one in Settings to see your weekly & monthly budget here.'}</p>`;
+    z.appendChild(c); return;
+  }
+  const pctM=Math.min(100,Math.round(mi.spentMonth/mi.budget*100)); const overM=mi.spentMonth>mi.budget;
+  const g=document.createElement('div'); g.innerHTML=`
+    <div class="metric">
+      <div class="m"><div class="lbl">${S.settings.lang==='ja'?'今週の予算':"This week's budget"}</div><div class="v">${money(mi.weekBudget)}</div><div class="sub">${S.settings.lang==='ja'?'先週は ':'last week '}${money(mi.lastWeek)}</div></div>
+      <div class="m"><div class="lbl">${S.settings.lang==='ja'?'今月の残り':'Left this month'}</div><div class="v ${mi.remaining<0?'over':''}">${money(mi.remaining)}</div><div class="sub">${S.settings.lang==='ja'?'予算 ':'of '}${money(mi.budget)}</div></div>
+    </div>
+    <div class="card" style="padding:14px;margin-top:10px;">
+      <div style="display:flex;justify-content:space-between;font-weight:700;"><span>${S.settings.lang==='ja'?'今月の支出':"This month's spend"}</span><span class="${overM?'':''}" style="${overM?'color:var(--coral)':''}">${money(mi.spentMonth)} / ${money(mi.budget)}</span></div>
+      <div class="bar"><b class="${overM?'over':''}" style="width:${pctM}%"></b></div>
+    </div>`;
+  z.appendChild(g);
+}
+
+/* ---------- PLAN ---------- */
+function weekDates(){ const out=[],d=new Date(); d.setHours(0,0,0,0); for(let i=0;i<7;i++){const x=new Date(d);x.setDate(d.getDate()+i);out.push(x);} return out; }
+const iso=d=>{const z=new Date(d.getTime()-d.getTimezoneOffset()*6e4);return z.toISOString().slice(0,10);};
+function dayName(d){ return S.settings.lang==='ja'?('日月火水木金土'[d.getDay()]+'曜'):['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'][d.getDay()]; }
 function renderPlan(){
-  const body=$('#weekBody'); body.innerHTML='';
-  const today=iso(new Date());
+  renderBudget();
+  const body=$('#weekBody'); body.innerHTML=''; const today=iso(new Date());
   weekDates().forEach(d=>{
     const key=iso(d); const entries=S.plan[key]||[];
     const card=document.createElement('div'); card.className='card day'+(key===today?' today':'');
     const head=document.createElement('div'); head.className='dhead';
-    head.innerHTML=`<span class="dname">${esc(dayName(d))}</span><span class="ddate">${d.getMonth()+1}/${d.getDate()}</span>`;
+    head.innerHTML=`<span class="dname">${esc(dayName(d))}${key===today?(S.settings.lang==='ja'?' ・今日':' · today'):''}</span><span class="ddate">${d.getMonth()+1}/${d.getDate()}</span>`;
     card.appendChild(head);
     entries.forEach((e,idx)=>{
       const r=document.createElement('div'); r.className='planitem';
       r.innerHTML=`<span class="pi">${e.type==='meal'?'🍽️':'🛒'}</span><span class="pname">${esc(e.name)}</span><span class="pkind">${e.type==='meal'?(S.settings.lang==='ja'?'献立':'meal'):''}</span>`;
       const x=document.createElement('button'); x.className='del'; x.textContent='×';
-      x.onclick=()=>{ S.plan[key].splice(idx,1); if(!S.plan[key].length) delete S.plan[key]; save(); renderPlan(); };
+      x.onclick=()=>{S.plan[key].splice(idx,1); if(!S.plan[key].length)delete S.plan[key]; save(); renderPlan();};
       r.appendChild(x); card.appendChild(r);
     });
     const add=document.createElement('div'); add.className='addmini';
     add.innerHTML=`<button>＋ ${S.settings.lang==='ja'?'献立・品を追加':'Add meal or item'}</button>`;
-    add.firstChild.onclick=()=>openPlanAdd(key);
-    card.appendChild(add);
+    add.firstChild.onclick=()=>openPlanAdd(key); card.appendChild(add);
     body.appendChild(card);
   });
 }
 function openPlanAdd(key){
   const meals=Object.values(S.meals);
-  const mealOpts=meals.length? meals.map(m=>`<button class="chip" data-meal="${m.id}">${esc(m.name)}</button>`).join('')
-    : `<span class="sub">${S.settings.lang==='ja'?'まだ献立がありません（献立タブで保存）':'No saved meals yet (save some in the Meals tab)'}</span>`;
-  openModal(`
-    <h2>${S.settings.lang==='ja'?'追加':'Add to this day'}</h2>
-    <label>${S.settings.lang==='ja'?'保存した献立から':'From your saved meals'}</label>
-    <div class="chips" id="p_meals">${mealOpts}</div>
+  const mealOpts=meals.length?meals.map(m=>`<button class="chip" data-meal="${m.id}">${esc(m.name)}</button>`).join(''):`<span class="sub">${S.settings.lang==='ja'?'まだ献立がありません':'No saved meals yet'}</span>`;
+  openModal(`<h2>${S.settings.lang==='ja'?'追加':'Add to this day'}</h2>
+    <label>${S.settings.lang==='ja'?'保存した献立から':'From your saved meals'}</label><div class="chips" id="p_meals">${mealOpts}</div>
     <label>${S.settings.lang==='ja'?'または自由に入力':'Or type anything'}</label>
-    <div class="ingedit"><input class="n" id="p_free" type="text" placeholder="${S.settings.lang==='ja'?'例：カレー / 牛乳':'e.g. Curry / Milk'}"><button class="btn primary" id="p_add">${S.settings.lang==='ja'?'追加':'Add'}</button></div>
-  `, ()=>{
-    $$('#p_meals [data-meal]').forEach(b=> b.onclick=()=>{
-      const m=S.meals[b.getAttribute('data-meal')];
-      (S.plan[key]=S.plan[key]||[]).push({type:'meal', name:m.name, mealId:m.id, qty:1});
-      save(); closeModal(); renderPlan();
-    });
-    const addFree=()=>{ const v=$('#p_free').value.trim(); if(!v) return;
-      (S.plan[key]=S.plan[key]||[]).push({type:'item', name:v, qty:1});
-      save(); closeModal(); renderPlan(); };
-    $('#p_add').onclick=addFree;
-    $('#p_free').addEventListener('keydown',e=>{ if(e.key==='Enter') addFree(); });
+    <div class="ingedit"><input class="n" id="p_free" type="text" placeholder="${S.settings.lang==='ja'?'例：カレー':'e.g. Curry'}"><button class="bigbtn" style="width:auto;height:48px;padding:0 18px;" id="p_add">${S.settings.lang==='ja'?'追加':'Add'}</button></div>`,()=>{
+    $$('#p_meals [data-meal]').forEach(b=>b.onclick=()=>{const m=S.meals[b.getAttribute('data-meal')];(S.plan[key]=S.plan[key]||[]).push({type:'meal',name:m.name,mealId:m.id,qty:1}); save(); closeModal(); renderPlan();});
+    const addFree=()=>{const v=$('#p_free').value.trim(); if(!v)return;(S.plan[key]=S.plan[key]||[]).push({type:'item',name:v,qty:1}); save(); closeModal(); renderPlan();};
+    $('#p_add').onclick=addFree; $('#p_free').addEventListener('keydown',e=>{if(e.key==='Enter')addFree();});
   });
 }
 function buildListFromPlan(){
-  const merged={}; // norm -> {name, qty}
+  const merged={};
   Object.values(S.plan).flat().forEach(e=>{
-    if(e.type==='meal'){
-      const m=S.meals[e.mealId]; if(!m) return;
-      m.ings.forEach(ing=>{ const k=norm(ing.name); if(!merged[k]) merged[k]={name:ing.name,qty:0}; merged[k].qty+=(ing.qty||1); });
-    } else {
-      const k=norm(e.name); if(!merged[k]) merged[k]={name:e.name,qty:0}; merged[k].qty+=(e.qty||1);
-    }
+    if(e.type==='meal'){const m=S.meals[e.mealId]; if(!m)return; m.ings.forEach(ing=>{const k=norm(ing.name); if(!merged[k])merged[k]={name:ing.name,qty:0}; merged[k].qty+=(ing.qty||1);});}
+    else{const k=norm(e.name); if(!merged[k])merged[k]={name:e.name,qty:0}; merged[k].qty+=(e.qty||1);}
   });
-  const keys=Object.keys(merged);
-  if(!keys.length){ toast(S.settings.lang==='ja'?'献立がまだありません':'Nothing planned yet'); return; }
-  keys.forEach(k=> addItem(merged[k].name, merged[k].qty, true));
-  save(); toast((S.settings.lang==='ja'?'追加しました：':'Added ')+keys.length+(S.settings.lang==='ja'?'品':' items'));
-  switchTab('list');
+  const keys=Object.keys(merged); if(!keys.length){toast(S.settings.lang==='ja'?'献立がまだありません':'Nothing planned yet');return;}
+  keys.forEach(k=>addItem(merged[k].name,merged[k].qty,true)); save();
+  toast((S.settings.lang==='ja'?'追加：':'Added ')+keys.length); switchTab('list');
 }
 
-/* ---------- MEALS view ---------- */
+/* ---------- MEALS ---------- */
 function renderMeals(){
-  const body=$('#mealsBody'); body.innerHTML='';
-  const meals=Object.values(S.meals);
-  if(!meals.length){ body.innerHTML=`<div class="empty"><span class="big">🍳</span>${S.settings.lang==='ja'?'よく作る料理を保存すると、献立に入れたとき材料が自動で出ます。':'Save meals you cook often. When you plan one, its ingredients fill the list automatically.'}</div>`; return; }
+  const body=$('#mealsBody'); body.innerHTML=''; const meals=Object.values(S.meals);
+  if(!meals.length){ body.innerHTML=`<div class="empty"><span class="big">🍳</span>${S.settings.lang==='ja'?'よく作る料理を保存すると、献立に入れたとき材料が自動で出ます。':'Save meals you cook often. Plan one and its ingredients fill the list automatically.'}</div>`; return; }
   meals.forEach(m=>{
-    const card=document.createElement('div'); card.className='card meal'; card.style.marginBottom='10px';
+    const card=document.createElement('div'); card.className='card meal';
     const ings=m.ings.map(i=>`<li>${esc(i.name)}${i.qty>1?' ×'+i.qty:''}</li>`).join('');
-    card.innerHTML=`<div class="mtop"><span class="mname">${esc(m.name)}</span>
-      <span><button class="btn ghost" style="height:38px;padding:0 12px;" data-edit="${m.id}">✎</button></span></div>
+    card.innerHTML=`<div class="mtop"><span class="mname">${esc(m.name)}</span><button class="qtybtn" data-edit="${m.id}">✎</button></div>
       <ul class="ings">${ings||'<li class="sub">no ingredients</li>'}</ul>
-      <button class="btn full" style="margin-top:10px;" data-toplan="${m.id}">📅 ${S.settings.lang==='ja'?'献立に入れる':'Add to a day'}</button>`;
+      <button class="bigbtn ghost" style="margin-top:11px;" data-toplan="${m.id}">📅 ${S.settings.lang==='ja'?'献立に入れる':'Add to a day'}</button>`;
     body.appendChild(card);
     card.querySelector('[data-edit]').onclick=()=>openMealEdit(m.id);
     card.querySelector('[data-toplan]').onclick=()=>openDayPicker(m);
@@ -609,172 +786,173 @@ function renderMeals(){
 }
 function openDayPicker(m){
   const days=weekDates().map(d=>`<button class="chip" data-d="${iso(d)}">${esc(dayName(d))} ${d.getMonth()+1}/${d.getDate()}</button>`).join('');
-  openModal(`<h2>${esc(m.name)} → ${S.settings.lang==='ja'?'どの日？':'which day?'}</h2><div class="chips">${days}</div>`, ()=>{
-    $$('[data-d]').forEach(b=> b.onclick=()=>{ const k=b.getAttribute('data-d');
-      (S.plan[k]=S.plan[k]||[]).push({type:'meal',name:m.name,mealId:m.id,qty:1}); save(); closeModal(); toast(S.settings.lang==='ja'?'追加しました':'Added to plan'); });
+  openModal(`<h2>${esc(m.name)} → ${S.settings.lang==='ja'?'どの日？':'which day?'}</h2><div class="chips">${days}</div>`,()=>{
+    $$('[data-d]').forEach(b=>b.onclick=()=>{const k=b.getAttribute('data-d');(S.plan[k]=S.plan[k]||[]).push({type:'meal',name:m.name,mealId:m.id,qty:1}); save(); closeModal(); toast(S.settings.lang==='ja'?'追加しました':'Added to plan');});
   });
 }
 function openMealEdit(id){
-  const m = id? S.meals[id] : {id:uid(), name:'', ings:[{name:'',qty:1}]};
-  const isNew = !id;
-  const ingRows = (ings)=> ings.map((ing,i)=>`
-    <div class="ingedit" data-i="${i}">
-      <input class="n" type="text" value="${esc(ing.name)}" placeholder="${S.settings.lang==='ja'?'材料':'ingredient'}">
-      <input class="q" type="number" min="1" value="${ing.qty||1}">
-      <button class="x" aria-label="remove">×</button>
-    </div>`).join('');
-  let draft = JSON.parse(JSON.stringify(m.ings.length?m.ings:[{name:'',qty:1}]));
-  openModal(`
-    <h2>${isNew?(S.settings.lang==='ja'?'新しい献立':'New meal'):(S.settings.lang==='ja'?'献立を編集':'Edit meal')}</h2>
-    <label>${S.settings.lang==='ja'?'献立の名前':'Meal name'}</label>
-    <input type="text" id="me_name" value="${esc(m.name)}" placeholder="${S.settings.lang==='ja'?'例：肉じゃが':'e.g. Curry rice'}">
-    <label>${S.settings.lang==='ja'?'材料':'Ingredients'}</label>
-    <div id="me_ings">${ingRows(draft)}</div>
-    <button class="btn ghost" id="me_adding" style="margin-top:8px;">＋ ${S.settings.lang==='ja'?'材料を追加':'Add ingredient'}</button>
-    <div style="display:flex; gap:8px; margin-top:16px;">
-      ${isNew?'':`<button class="btn danger" id="me_del">${S.settings.lang==='ja'?'削除':'Delete'}</button>`}
-      <button class="btn primary full" id="me_save">${S.settings.lang==='ja'?'保存':'Save meal'}</button>
-    </div>
-  `, ()=>{
+  const m=id?S.meals[id]:{id:uid(),name:'',ings:[{name:'',qty:1}]}; const isNew=!id;
+  const ingRows=ings=>ings.map(ing=>`<div class="ingedit"><input class="n" type="text" value="${esc(ing.name)}" placeholder="${S.settings.lang==='ja'?'材料':'ingredient'}"><input class="q" type="number" inputmode="numeric" min="1" value="${ing.qty||1}"><button class="x">×</button></div>`).join('');
+  let draft=JSON.parse(JSON.stringify(m.ings.length?m.ings:[{name:'',qty:1}]));
+  openModal(`<h2>${isNew?(S.settings.lang==='ja'?'新しい献立':'New meal'):(S.settings.lang==='ja'?'献立を編集':'Edit meal')}</h2>
+    <label>${S.settings.lang==='ja'?'献立の名前':'Meal name'}</label><input type="text" id="me_name" value="${esc(m.name)}" placeholder="${S.settings.lang==='ja'?'例：肉じゃが':'e.g. Curry rice'}">
+    <label>${S.settings.lang==='ja'?'材料':'Ingredients'}</label><div id="me_ings">${ingRows(draft)}</div>
+    <button class="bigbtn ghost" id="me_adding" style="margin-top:10px;">＋ ${S.settings.lang==='ja'?'材料を追加':'Add ingredient'}</button>
+    <div style="display:flex;gap:8px;margin-top:16px;">${isNew?'':`<button class="bigbtn ghost" style="color:var(--coral);" id="me_del">${S.settings.lang==='ja'?'削除':'Delete'}</button>`}<button class="bigbtn" id="me_save">${S.settings.lang==='ja'?'保存':'Save meal'}</button></div>`,()=>{
     const wrap=$('#me_ings');
-    const bind=()=>{
-      $$('.ingedit',wrap).forEach(r=>{
-        r.querySelector('.x').onclick=()=>{ r.remove(); };
-      });
-    };
-    bind();
-    $('#me_adding').onclick=()=>{ const div=document.createElement('div'); div.className='ingedit';
-      div.innerHTML=`<input class="n" type="text" placeholder="${S.settings.lang==='ja'?'材料':'ingredient'}"><input class="q" type="number" min="1" value="1"><button class="x">×</button>`;
-      div.querySelector('.x').onclick=()=>div.remove(); wrap.appendChild(div); div.querySelector('.n').focus(); };
-    $('#me_save').onclick=()=>{
-      const name=$('#me_name').value.trim(); if(!name){ toast(S.settings.lang==='ja'?'名前を入れてください':'Enter a name'); return; }
-      const ings=$$('.ingedit',wrap).map(r=>({name:r.querySelector('.n').value.trim(), qty:Math.max(1,parseInt(r.querySelector('.q').value)||1)})).filter(i=>i.name);
-      S.meals[m.id]={id:m.id, name, ings};
-      save(); closeModal(); renderMeals();
-    };
-    if(!isNew) $('#me_del').onclick=()=>{ if(confirm(S.settings.lang==='ja'?'削除しますか？':'Delete this meal?')){ delete S.meals[m.id]; save(); closeModal(); renderMeals(); } };
+    const bind=()=>$$('.ingedit',wrap).forEach(r=>r.querySelector('.x').onclick=()=>r.remove()); bind();
+    $('#me_adding').onclick=()=>{const div=document.createElement('div'); div.className='ingedit'; div.innerHTML=`<input class="n" type="text" placeholder="${S.settings.lang==='ja'?'材料':'ingredient'}"><input class="q" type="number" inputmode="numeric" min="1" value="1"><button class="x">×</button>`; div.querySelector('.x').onclick=()=>div.remove(); wrap.appendChild(div); div.querySelector('.n').focus();};
+    $('#me_save').onclick=()=>{const name=$('#me_name').value.trim(); if(!name){toast(S.settings.lang==='ja'?'名前を入れてください':'Enter a name');return;}
+      const ings=$$('.ingedit',wrap).map(r=>({name:r.querySelector('.n').value.trim(),qty:Math.max(1,parseInt(r.querySelector('.q').value)||1)})).filter(i=>i.name);
+      S.meals[m.id]={id:m.id,name,ings}; save(); closeModal(); renderMeals();};
+    if(!isNew) $('#me_del').onclick=()=>{if(confirm(S.settings.lang==='ja'?'削除しますか？':'Delete this meal?')){delete S.meals[m.id]; save(); closeModal(); renderMeals();}};
   });
 }
 
-/* ---------- SETTINGS view ---------- */
+/* ---------- SETTINGS ---------- */
 function renderSettings(){
-  $('#langSel').value=S.settings.lang;
-  $('#curSel').value=S.settings.currency;
-  $('#storeInp').value=S.settings.store||'';
-  $('#shareInp').value=S.settings.shareKey||DEFAULT_KEY;
-  setSync('ok');
-  // category order
+  // role
+  const rp=$('#rolePick'); rp.innerHTML='';
+  (S.settings.members||[]).forEach(mem=>{const b=document.createElement('button'); b.className=(ROLE===mem.name)?'on':''; b.textContent=(mem.role==='primary'?'👑 ':'')+mem.name; b.onclick=()=>{ROLE=mem.name; localStorage.setItem(ROLE_KEY,ROLE); renderSettings(); renderList();}; rp.appendChild(b);});
+  $('#langSel').value=S.settings.lang; $('#curSel').value=S.settings.currency; $('#curSym2').textContent=cur();
+  $('#storeInp').value=S.settings.store||''; $('#budgetInp').value=S.settings.monthlyBudget||''; $('#shareInp').value=S.settings.shareKey||DEFAULT_KEY;
+  const si=$('#syncInfo'); if(si) si.textContent=CLOUD?(S.settings.shareKey||DEFAULT_KEY):'Add Supabase keys to enable';
+  // aisle order (editable)
   const ob=$('#catOrderBody'); ob.innerHTML='';
-  const order=S.catOrder.length?S.catOrder:CATS.map(c=>c.id);
+  const order=(S.catOrder||[]).filter(id=>catObj(id));
   order.forEach((cid,i)=>{
-    const c=catObj(cid); const cnt=S.list.filter(x=>x.cat===cid).length;
-    const r=document.createElement('div'); r.className='ordrow';
-    r.innerHTML=`<span class="em" style="font-size:18px;">${c.em}</span><span class="oname">${esc(catName(cid))}</span>${cnt?`<span class="catcount">${cnt}</span>`:''}
-      <span class="arr"><button ${i===0?'disabled':''} data-up>↑</button><button ${i===order.length-1?'disabled':''} data-dn>↓</button></span>`;
-    r.querySelector('[data-up]').onclick=()=>{ if(i>0){ [order[i-1],order[i]]=[order[i],order[i-1]]; S.catOrder=order; save(); renderSettings(); } };
-    r.querySelector('[data-dn]').onclick=()=>{ if(i<order.length-1){ [order[i+1],order[i]]=[order[i],order[i+1]]; S.catOrder=order; save(); renderSettings(); } };
+    const c=catObj(cid); const cnt=S.list.filter(x=>x.cat===cid&&!x.checked).length;
+    const r=document.createElement('div'); r.className='ordrow'; if(c.hidden) r.style.opacity='.45';
+    r.innerHTML=`<span class="em" style="font-size:19px;">${c.em}</span><span class="oname" style="color:${c.color};">${esc(catName(cid))}</span>${cnt?`<span class="sub" style="margin-right:6px;">·${cnt}</span>`:''}
+      <span class="arr"><button ${i===0?'disabled':''} data-up>↑</button><button ${i===order.length-1?'disabled':''} data-dn>↓</button><button class="xbtn" data-rm title="remove">${c.hidden?'＋':'×'}</button></span>`;
+    r.querySelector('[data-up]').onclick=()=>{if(i>0){[order[i-1],order[i]]=[order[i],order[i-1]]; S.catOrder=order; save(); renderSettings();}};
+    r.querySelector('[data-dn]').onclick=()=>{if(i<order.length-1){[order[i+1],order[i]]=[order[i],order[i+1]]; S.catOrder=order; save(); renderSettings();}};
+    r.querySelector('[data-rm]').onclick=()=>{ if(c.hidden){c.hidden=false;} else { c.hidden=true; S.list.forEach(it=>{if(it.cat===cid)it.cat='other';}); } save(); renderSettings(); };
+    r.querySelector('.oname').onclick=()=>{const nv=prompt(S.settings.lang==='ja'?'売り場の名前':'Rename aisle',catName(cid)); if(nv&&nv.trim()){ if(S.settings.lang==='ja')c.ja=nv.trim(); else c.en=nv.trim(); save(); renderSettings();}};
     ob.appendChild(r);
   });
-  // saved prices
+  // prices
   const pb=$('#priceBody'); pb.innerHTML='';
   const cats=Object.values(S.catalog).sort((a,b)=>a.name.localeCompare(b.name));
-  if(!cats.length){ pb.innerHTML=`<div class="empty" style="padding:24px;">${S.settings.lang==='ja'?'値段を入れると、ここに保存され次回から自動で出ます。':'Prices you enter while shopping are saved here and pre-filled next time.'}</div>`; }
-  cats.forEach(c=>{
-    const r=document.createElement('div'); r.className='set-row';
-    r.innerHTML=`<span class="lbl">${esc(c.name)} <span class="sub">${esc(catName(c.cat))}</span></span>
-      <span style="display:flex;align-items:center;gap:6px;">${cur()}<input type="number" min="0" value="${c.price||''}" style="width:84px;height:38px;text-align:right;" data-pn="${esc(norm(c.name))}">
-      <button class="del" data-del="${esc(norm(c.name))}">×</button></span>`;
-    r.querySelector('[data-pn]').onchange=(e)=>{ c.price=Math.max(0,Math.round(parseFloat(e.target.value)||0)); save(false); save(); };
-    r.querySelector('[data-del]').onclick=()=>{ delete S.catalog[norm(c.name)]; save(); renderSettings(); };
-    pb.appendChild(r);
+  if(!cats.length){ pb.innerHTML=`<div class="empty" style="padding:24px;">${S.settings.lang==='ja'?'値段を入れると、ここに保存されます。':'Prices you enter while shopping are saved here.'}</div>`; }
+  cats.forEach(c=>{const r=document.createElement('div'); r.className='set-row';
+    r.innerHTML=`<span class="lbl">${esc(c.name)} <span class="sub">${esc(catName(c.cat))}</span></span><span style="display:flex;align-items:center;gap:6px;">${cur()}<input type="number" inputmode="numeric" min="0" value="${c.price||''}" style="width:88px;height:40px;text-align:right;" data-pn="${esc(norm(c.name))}"><button class="del" data-del="${esc(norm(c.name))}">×</button></span>`;
+    r.querySelector('[data-pn]').onchange=e=>{c.price=Math.max(0,Math.round(parseFloat(e.target.value)||0)); save();};
+    r.querySelector('[data-del]').onclick=()=>{delete S.catalog[norm(c.name)]; save(); renderSettings();};
+    pb.appendChild(r);});
+}
+function addAisle(){
+  const palette=['#639922','#378add','#d4537e','#ba7517','#7f77dd','#1d9e9e','#d6608a','#3fa7d6','#bb8a1e'];
+  openModal(`<h2>${S.settings.lang==='ja'?'売り場を追加':'Add an aisle'}</h2>
+    <label>${S.settings.lang==='ja'?'名前':'Name'}</label><input type="text" id="a_name" placeholder="${S.settings.lang==='ja'?'例：お花':'e.g. Flowers'}">
+    <label>${S.settings.lang==='ja'?'絵文字':'Emoji'}</label><input type="text" id="a_em" value="🛒" maxlength="2" style="width:80px;text-align:center;font-size:22px;">
+    <button class="bigbtn" id="a_save" style="margin-top:16px;">${S.settings.lang==='ja'?'追加':'Add aisle'}</button>`,()=>{
+    $('#a_save').onclick=()=>{const nm=$('#a_name').value.trim(); if(!nm){toast(S.settings.lang==='ja'?'名前を入れてください':'Enter a name');return;}
+      const id='cust_'+uid(); const color=palette[(S.cats.length)%palette.length];
+      S.cats.push({id,en:nm,ja:nm,em:$('#a_em').value||'🛒',color}); S.catOrder.push(id);
+      // place before 'other'
+      const oi=S.catOrder.indexOf('other'); if(oi>-1){S.catOrder.splice(S.catOrder.indexOf(id),1); S.catOrder.splice(oi,0,id);}
+      save(); closeModal(); renderSettings();};
   });
 }
 
+/* ---------- realtime polling during a shop ---------- */
+function startPolling(){ stopPolling(); if(!CLOUD) return; pollTimer=setInterval(async()=>{
+  const remote=await cloudPull(); if(remote&&(remote.updatedAt||0)>(S.updatedAt||0)){ const role=ROLE; S=remote; normalizeState(); ROLE=role; try{localStorage.setItem(LS_KEY,JSON.stringify(S));}catch(e){} if($('#view-list').classList.contains('active')) renderList(); }
+},5000); }
+function stopPolling(){ if(pollTimer){clearInterval(pollTimer); pollTimer=null;} }
+
 /* ---------- modal + toast ---------- */
-function openModal(html, after){
+function openModal(html,after,center){
   const root=$('#modalRoot');
-  root.innerHTML=`<div class="modal-bg"><div class="modal">${html}</div></div>`;
-  root.querySelector('.modal-bg').onclick=(e)=>{ if(e.target.classList.contains('modal-bg')) closeModal(); };
+  root.innerHTML=`<div class="modal-bg"><div class="modal${center?' center':''}">${html}</div></div>`;
+  root.querySelector('.modal-bg').onclick=e=>{if(e.target.classList.contains('modal-bg'))closeModal();};
   if(after) after();
 }
 function closeModal(){ $('#modalRoot').innerHTML=''; }
 let toastTimer=null;
-function toast(msg){
+function toast(msg,action,fn){
   let t=$('#toast');
-  if(!t){ t=document.createElement('div'); t.id='toast';
-    t.style.cssText='position:fixed;left:50%;bottom:calc(86px + env(safe-area-inset-bottom));transform:translateX(-50%);background:#26251f;color:#fff;padding:11px 18px;border-radius:12px;font-size:14px;z-index:80;opacity:0;transition:.2s;max-width:90%;text-align:center;';
-    document.body.appendChild(t); }
-  t.textContent=msg; t.style.opacity='1';
-  clearTimeout(toastTimer); toastTimer=setTimeout(()=>t.style.opacity='0',1800);
+  if(!t){t=document.createElement('div'); t.id='toast'; t.style.cssText='position:fixed;left:50%;bottom:calc(90px + env(safe-area-inset-bottom));transform:translateX(-50%);background:#23221c;color:#fff;padding:13px 18px;border-radius:14px;font-size:15px;font-weight:600;z-index:80;opacity:0;transition:.2s;max-width:92%;display:flex;align-items:center;gap:14px;box-shadow:0 4px 16px rgba(0,0,0,.25);'; document.body.appendChild(t);}
+  t.innerHTML=`<span>${esc(msg)}</span>`;
+  if(action&&fn){const b=document.createElement('button'); b.textContent=action; b.style.cssText='background:none;border:0;color:#5dcaa5;font-weight:800;font-size:15px;cursor:pointer;'; b.onclick=()=>{fn(); t.style.opacity='0';}; t.appendChild(b);}
+  t.style.opacity='1'; clearTimeout(toastTimer); toastTimer=setTimeout(()=>t.style.opacity='0',action?4200:1900);
+}
+function timeAgo(ts){ const s=Math.floor((Date.now()-ts)/1000); if(s<60)return S.settings.lang==='ja'?'たった今':'just now'; const m=Math.floor(s/60); if(m<60)return m+(S.settings.lang==='ja'?'分前':'m ago'); const h=Math.floor(m/60); if(h<24)return h+(S.settings.lang==='ja'?'時間前':'h ago'); return Math.floor(h/24)+(S.settings.lang==='ja'?'日前':'d ago'); }
+
+/* ---------- clock ---------- */
+function tickClock(){
+  const now=new Date();
+  const opt={weekday:'short',day:'numeric',month:'short'};
+  const dstr=now.toLocaleDateString(S.settings.lang==='ja'?'ja-JP':'en-GB',opt);
+  const tstr=now.toLocaleTimeString(S.settings.lang==='ja'?'ja-JP':'en-GB',{hour:'2-digit',minute:'2-digit'});
+  const el=$('#datetime'); if(el) el.textContent=`${dstr} · ${tstr}`;
 }
 
 /* ---------- tabs ---------- */
 function switchTab(tab){
   $$('.view').forEach(v=>v.classList.remove('active'));
   $('#view-'+tab).classList.add('active');
-  $$('nav.tabs button').forEach(b=>b.classList.toggle('on', b.dataset.tab===tab));
-  const titles={list:'titleList',plan:'titlePlan',meals:'titleMeals',set:'titleSet'};
-  $('#viewTitle').textContent=T(titles[tab]);
-  if(tab==='list') renderList();
-  if(tab==='plan') renderPlan();
-  if(tab==='meals') renderMeals();
-  if(tab==='set') renderSettings();
+  $$('nav.tabs button').forEach(b=>b.classList.toggle('on',b.dataset.tab===tab));
+  $('#viewTitle').textContent=T({list:'titleList',plan:'titlePlan',meals:'titleMeals',set:'titleSet'}[tab]);
+  if(tab==='list')renderList(); if(tab==='plan')renderPlan(); if(tab==='meals')renderMeals(); if(tab==='set')renderSettings();
   window.scrollTo(0,0);
 }
 
-/* ---------- wire up ---------- */
+/* ---------- wire ---------- */
 function bind(){
-  $$('nav.tabs button').forEach(b=> b.onclick=()=>switchTab(b.dataset.tab));
-  $('#addBtn').onclick=()=>{ const v=$('#addInput').value; if(v.trim()){ addItem(v); $('#addInput').value=''; renderList(); $('#addInput').focus(); } };
-  $('#addInput').addEventListener('keydown',e=>{ if(e.key==='Enter'){ e.preventDefault(); $('#addBtn').click(); } });
-  $('#aisleSw').onclick=()=>{ S.settings.aisle=!S.settings.aisle; save(); renderList(); };
-  $('#aisleSw').addEventListener('keydown',e=>{ if(e.key==='Enter'||e.key===' '){ e.preventDefault(); $('#aisleSw').click(); } });
-  $('#clearDone').onclick=()=>{ S.list=S.list.filter(it=>!it.checked); save(); renderList(); };
+  $$('nav.tabs button').forEach(b=>b.onclick=()=>switchTab(b.dataset.tab));
+  $('#addBtn').onclick=()=>{const v=$('#addInput').value; if(v.trim()){addItem(v); $('#addInput').value=''; renderList(); $('#addInput').focus();}};
+  $('#addInput').addEventListener('keydown',e=>{if(e.key==='Enter'){e.preventDefault(); $('#addBtn').click();}});
+  $('#aisleSw').onclick=()=>{S.settings.aisle=!S.settings.aisle; save(); renderList();};
+  $('#aisleSw').addEventListener('keydown',e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault(); $('#aisleSw').click();}});
+  $('#freqBtn').onclick=openFreq;
+  $('#checkoutBtn').onclick=()=>{ if(!S.session||!S.session.active){ S.session={active:true,type:S.settings.aisle?'weekly':'quick',startedAt:Date.now()}; save(); } finishShop(); };
   $('#buildListBtn').onclick=buildListFromPlan;
   $('#newMealBtn').onclick=()=>openMealEdit(null);
-  $('#langSel').onchange=e=>{ S.settings.lang=e.target.value; save(); applyLang(); switchTab('set'); };
-  $('#curSel').onchange=e=>{ S.settings.currency=e.target.value; save(); };
-  $('#storeInp').onchange=e=>{ S.settings.store=e.target.value.trim(); save(); };
-  $('#shareInp').onchange=async e=>{ S.settings.shareKey=e.target.value.trim()||DEFAULT_KEY; save(false);
-    const remote=await cloudPull(); if(remote){ S=remote; normalizeState(); save(false); applyLang(); switchTab('list'); toast('Linked'); } else { save(); } };
-  $('#reloadBtn').onclick=async()=>{ const r=await cloudPull(); if(r){ S=r; normalizeState(); try{localStorage.setItem(LS_KEY,JSON.stringify(S));}catch(e){}; applyLang(); switchTab('list'); toast(S.settings.lang==='ja'?'読み込みました':'Reloaded'); } else toast('Nothing in cloud'); };
-  $('#resetBtn').onclick=()=>{ if(confirm('Reset everything on this device?')){ S=blank(); save(); applyLang(); switchTab('list'); } };
+  $('#addAisleBtn').onclick=addAisle;
+  $('#langSel').onchange=e=>{S.settings.lang=e.target.value; save(); applyLang(); switchTab('set');};
+  $('#curSel').onchange=e=>{S.settings.currency=e.target.value; save(); renderSettings();};
+  $('#storeInp').onchange=e=>{S.settings.store=e.target.value.trim(); save();};
+  $('#budgetInp').onchange=e=>{S.settings.monthlyBudget=Math.max(0,Math.round(parseFloat(e.target.value)||0)); save();};
+  $('#shareInp').onchange=async e=>{S.settings.shareKey=e.target.value.trim()||DEFAULT_KEY; const remote=await cloudPull(); if(remote){const role=ROLE; S=remote; normalizeState(); ROLE=role; save(false); applyLang(); switchTab('list'); toast('Linked');} else save();};
+  $('#reloadBtn').onclick=async()=>{const r=await cloudPull(); if(r){const role=ROLE; S=r; normalizeState(); ROLE=role; try{localStorage.setItem(LS_KEY,JSON.stringify(S));}catch(e){} applyLang(); switchTab('list'); toast(S.settings.lang==='ja'?'読み込みました':'Reloaded');} else toast('Nothing in cloud');};
+  $('#resetBtn').onclick=()=>{if(confirm('Reset everything on this device?')){S=blank(); save(); applyLang(); switchTab('list');}};
 }
-
 function normalizeState(){
-  const b=blank();
-  S=Object.assign(b, S||{});
-  S.settings=Object.assign(b.settings, S.settings||{});
-  if(!Array.isArray(S.catOrder)||!S.catOrder.length) S.catOrder=CATS.map(c=>c.id);
-  // ensure any new categories appear in order
-  CATS.forEach(c=>{ if(!S.catOrder.includes(c.id)) S.catOrder.push(c.id); });
+  const b=blank(); S=Object.assign(b,S||{}); S.settings=Object.assign(b.settings,S.settings||{});
+  if(!Array.isArray(S.cats)||!S.cats.length) S.cats=DEFAULT_CATS.map(c=>({...c}));
+  // ensure default cats exist
+  DEFAULT_CATS.forEach(dc=>{ if(!S.cats.find(c=>c.id===dc.id)) S.cats.push({...dc}); });
+  if(!Array.isArray(S.catOrder)||!S.catOrder.length) S.catOrder=S.cats.map(c=>c.id);
+  S.cats.forEach(c=>{ if(!S.catOrder.includes(c.id)) S.catOrder.push(c.id); });
   S.list=S.list||[]; S.catalog=S.catalog||{}; S.meals=S.meals||{}; S.plan=S.plan||{}; S.overrides=S.overrides||{};
-  // backfill categories for older items
-  S.list.forEach(it=>{ if(!it.cat) it.cat=categorize(it.name); });
+  S.requests=S.requests||[]; S.spend=S.spend||[]; if(S.session===undefined) S.session=null;
+  if(!S.settings.members) S.settings.members=[{name:'Mum',role:'primary'},{name:'Noah',role:'secondary'}];
+  S.list.forEach(it=>{ if(!it.cat)it.cat=categorize(it.name); if(!it.unit)it.unit=guessUnit(it.name); });
 }
 
 /* ---------- boot ---------- */
 async function boot(){
-  S = loadLocal() || blank();
-  normalizeState();
-  applyLang();
-  bind();
-  switchTab('list');
-  setSync('saving');
-  // pull remote, take it if newer
+  S=loadLocal()||blank(); normalizeState();
+  ROLE=localStorage.getItem(ROLE_KEY)||'';
+  applyLang(); bind(); tickClock(); clockTimer=setInterval(tickClock,30000);
+  switchTab('list'); setSync('saving');
+  if(!ROLE){ // first run: ask who's using this phone
+    setTimeout(()=>openModal(`<h2>👋 ${S.settings.lang==='ja'?'はじめまして！':'Welcome!'}</h2>
+      <p class="sub" style="margin:0 2px 10px;">${S.settings.lang==='ja'?'この端末を使うのは誰ですか？':"Who's using this phone?"}</p>
+      <div class="role-pick" id="boot_role"></div>`,()=>{
+      (S.settings.members||[]).forEach(mem=>{const bb=document.createElement('button'); bb.textContent=(mem.role==='primary'?'👑 ':'')+mem.name; bb.onclick=()=>{ROLE=mem.name; localStorage.setItem(ROLE_KEY,ROLE); closeModal(); renderList();}; $('#boot_role').appendChild(bb);});
+    },true),400);
+  }
   if(CLOUD){
     const remote=await cloudPull();
-    if(remote && (remote.updatedAt||0) > (S.updatedAt||0)){
-      S=remote; normalizeState(); try{localStorage.setItem(LS_KEY,JSON.stringify(S));}catch(e){}
-      applyLang(); switchTab('list');
-    }
-    setSync('ok');
-    // push our state up so the row exists
-    cloudPush();
+    if(remote&&(remote.updatedAt||0)>(S.updatedAt||0)){const role=ROLE; S=remote; normalizeState(); ROLE=role; try{localStorage.setItem(LS_KEY,JSON.stringify(S));}catch(e){} applyLang(); switchTab('list');}
+    setSync('ok'); cloudPush();
+    if(S.session&&S.session.active) startPolling();
   } else setSync('off');
 }
 boot();
-
 if('serviceWorker' in navigator){ window.addEventListener('load',()=>navigator.serviceWorker.register('sw.js').catch(()=>{})); }
 </script>
 </body>

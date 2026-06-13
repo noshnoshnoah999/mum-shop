@@ -1,7 +1,7 @@
 {
-  "name": "Shopping",
-  "short_name": "Shopping",
-  "description": "Weekly shopping list, meal planner and price memory",
+  "name": "Aisle Be There",
+  "short_name": "Aisle",
+  "description": "Shopping list, meal planner, budget and price memory",
   "start_url": "./index.html",
   "scope": "./",
   "display": "standalone",
