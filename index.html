@@ -1,0 +1,781 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, maximum-scale=1" />
+<meta name="theme-color" content="#1d9e75" />
+<meta name="apple-mobile-web-app-capable" content="yes" />
+<meta name="apple-mobile-web-app-status-bar-style" content="default" />
+<meta name="apple-mobile-web-app-title" content="Shopping" />
+<link rel="manifest" href="manifest.json" />
+<link rel="apple-touch-icon" href="icon-180.png" />
+<title>Shopping</title>
+<style>
+  :root{
+    --bg:#f7f5ef; --card:#ffffff; --ink:#26251f; --muted:#86847a; --line:#e7e4d8;
+    --accent:#1d9e75; --accent-d:#0f6e56; --accent-soft:#e1f5ee;
+    --coral:#d85a30; --warn:#fef0e6; --shadow:0 1px 2px rgba(0,0,0,.04);
+    --radius:14px; --tap:48px;
+  }
+  *{box-sizing:border-box; -webkit-tap-highlight-color:transparent;}
+  html,body{margin:0; padding:0;}
+  body{
+    font-family:-apple-system,BlinkMacSystemFont,"Hiragino Sans","Helvetica Neue",Arial,sans-serif;
+    background:var(--bg); color:var(--ink); font-size:17px; line-height:1.4;
+    padding-bottom:calc(72px + env(safe-area-inset-bottom));
+    -webkit-font-smoothing:antialiased;
+  }
+  .wrap{max-width:560px; margin:0 auto; padding:0 14px;}
+  header{
+    position:sticky; top:0; z-index:30; background:var(--bg);
+    padding:calc(10px + env(safe-area-inset-top)) 0 8px; display:flex; align-items:center; justify-content:space-between;
+  }
+  header h1{font-size:22px; margin:0; font-weight:700;}
+  .pill{font-size:13px; color:var(--muted); background:var(--card); border:1px solid var(--line); border-radius:999px; padding:5px 12px;}
+  .view{display:none;} .view.active{display:block; animation:fade .2s ease;}
+  @keyframes fade{from{opacity:0; transform:translateY(4px);} to{opacity:1; transform:none;}}
+
+  /* tab bar */
+  nav.tabs{
+    position:fixed; left:0; right:0; bottom:0; z-index:40;
+    background:rgba(255,255,255,.92); backdrop-filter:saturate(180%) blur(12px);
+    border-top:1px solid var(--line); display:flex;
+    padding-bottom:env(safe-area-inset-bottom);
+  }
+  nav.tabs button{
+    flex:1; background:none; border:0; padding:9px 0 7px; color:var(--muted);
+    font-size:11px; font-weight:600; display:flex; flex-direction:column; align-items:center; gap:3px; cursor:pointer;
+  }
+  nav.tabs button .ic{font-size:22px; line-height:1;}
+  nav.tabs button.on{color:var(--accent-d);}
+
+  /* cards & sections */
+  .card{background:var(--card); border:1px solid var(--line); border-radius:var(--radius); box-shadow:var(--shadow);}
+  .sec-title{font-size:13px; font-weight:700; color:var(--muted); letter-spacing:.02em; margin:18px 4px 8px; display:flex; align-items:center; gap:7px;}
+  .sec-title .em{font-size:16px;}
+
+  /* list items */
+  .row{display:flex; align-items:center; gap:11px; padding:11px 14px; border-bottom:1px solid var(--line); min-height:var(--tap);}
+  .row:last-child{border-bottom:0;}
+  .check{width:26px; height:26px; border-radius:8px; border:2px solid var(--line); flex:0 0 auto; display:flex; align-items:center; justify-content:center; color:#fff; font-size:16px; cursor:pointer; transition:.12s;}
+  .check.done{background:var(--accent); border-color:var(--accent);}
+  .row .name{flex:1; min-width:0; overflow:hidden; text-overflow:ellipsis;}
+  .row.done .name{color:var(--muted); text-decoration:line-through;}
+  .qty{display:flex; align-items:center; gap:0; border:1px solid var(--line); border-radius:10px; overflow:hidden;}
+  .qty button{width:30px; height:32px; border:0; background:var(--card); font-size:18px; color:var(--accent-d); cursor:pointer;}
+  .qty span{min-width:26px; text-align:center; font-size:15px; font-variant-numeric:tabular-nums;}
+  .price{font-size:14px; color:var(--muted); font-variant-numeric:tabular-nums; min-width:48px; text-align:right; cursor:pointer; border:0; background:none; padding:4px;}
+  .price.noprice{color:var(--accent); }
+  .del{border:0; background:none; color:#c9c6ba; font-size:19px; cursor:pointer; padding:4px;}
+
+  /* add bar */
+  .addbar{display:flex; gap:8px; margin:10px 0 4px;}
+  .addbar input{flex:1; height:var(--tap); border:1px solid var(--line); border-radius:12px; padding:0 14px; font-size:16px; background:var(--card); outline:none;}
+  .addbar input:focus{border-color:var(--accent);}
+  .addbar .go{width:var(--tap); height:var(--tap); border:0; border-radius:12px; background:var(--accent); color:#fff; font-size:24px; cursor:pointer; flex:0 0 auto;}
+  .chips{display:flex; flex-wrap:wrap; gap:7px; margin:4px 0 2px;}
+  .chip{background:var(--accent-soft); color:var(--accent-d); border:0; border-radius:999px; padding:8px 13px; font-size:14px; cursor:pointer; font-weight:600;}
+  .chip.add{background:var(--card); border:1px dashed var(--line); color:var(--muted); font-weight:500;}
+
+  /* toggle */
+  .toggle-row{display:flex; align-items:center; justify-content:space-between; padding:13px 14px;}
+  .sw{width:46px; height:28px; border-radius:999px; background:var(--line); position:relative; cursor:pointer; flex:0 0 auto; transition:.15s;}
+  .sw.on{background:var(--accent);}
+  .sw b{position:absolute; top:3px; left:3px; width:22px; height:22px; border-radius:50%; background:#fff; transition:.15s; box-shadow:0 1px 2px rgba(0,0,0,.2);}
+  .sw.on b{left:21px;}
+  .sub{font-size:13px; color:var(--muted); margin-top:1px;}
+
+  /* total bar */
+  .totalbar{position:sticky; bottom:calc(72px + env(safe-area-inset-bottom)); margin:14px 0; }
+  .totalbar .card{display:flex; align-items:center; justify-content:space-between; padding:13px 16px;}
+  .totalbar .big{font-size:21px; font-weight:700; font-variant-numeric:tabular-nums;}
+
+  /* buttons */
+  .btn{display:inline-flex; align-items:center; justify-content:center; gap:7px; height:46px; padding:0 16px; border-radius:12px; border:1px solid var(--line); background:var(--card); color:var(--ink); font-size:15px; font-weight:600; cursor:pointer;}
+  .btn.primary{background:var(--accent); border-color:var(--accent); color:#fff;}
+  .btn.full{width:100%;}
+  .btn.ghost{background:none;}
+  .btn.danger{color:var(--coral); border-color:#f0d8cd;}
+
+  /* planner */
+  .day{margin-bottom:10px;}
+  .day .dhead{display:flex; align-items:baseline; justify-content:space-between; padding:9px 14px 4px;}
+  .day .dname{font-weight:700;} .day .ddate{font-size:13px; color:var(--muted);}
+  .day.today{border:1.5px solid var(--accent);}
+  .planitem{display:flex; align-items:center; gap:9px; padding:9px 14px; border-top:1px solid var(--line);}
+  .planitem .pi{font-size:18px;}
+  .planitem .pname{flex:1;}
+  .planitem .pkind{font-size:12px; color:var(--muted);}
+  .addmini{padding:9px 14px; border-top:1px solid var(--line);}
+  .addmini button{background:none; border:0; color:var(--accent-d); font-size:15px; font-weight:600; cursor:pointer; padding:4px 0;}
+
+  /* meals */
+  .meal{padding:14px;}
+  .meal .mtop{display:flex; align-items:center; justify-content:space-between;}
+  .meal .mname{font-weight:700; font-size:17px;}
+  .meal .ings{margin:8px 0 0; padding:0; list-style:none; display:flex; flex-wrap:wrap; gap:6px;}
+  .meal .ings li{font-size:13px; background:var(--bg); border:1px solid var(--line); border-radius:8px; padding:3px 9px;}
+
+  /* settings */
+  .set-group{margin:8px 0 4px;}
+  .set-row{display:flex; align-items:center; justify-content:space-between; gap:10px; padding:13px 14px; border-bottom:1px solid var(--line);}
+  .set-row:last-child{border-bottom:0;}
+  .set-row .lbl{flex:1;}
+  .ordrow{display:flex; align-items:center; gap:10px; padding:11px 14px; border-bottom:1px solid var(--line);}
+  .ordrow:last-child{border-bottom:0;}
+  .ordrow .oname{flex:1;}
+  .ordrow .arr{display:flex; gap:4px;}
+  .ordrow .arr button{width:38px; height:38px; border:1px solid var(--line); background:var(--card); border-radius:9px; font-size:16px; cursor:pointer; color:var(--accent-d);}
+  .ordrow .arr button:disabled{opacity:.3;}
+  select, input[type=number]{font-size:16px; padding:8px 10px; border:1px solid var(--line); border-radius:10px; background:var(--card); color:var(--ink);}
+
+  /* modal */
+  .modal-bg{position:fixed; inset:0; background:rgba(20,18,12,.4); z-index:60; display:flex; align-items:flex-end; justify-content:center; padding:0;}
+  .modal{background:var(--card); width:100%; max-width:560px; border-radius:20px 20px 0 0; padding:18px 16px calc(18px + env(safe-area-inset-bottom)); max-height:88vh; overflow:auto; animation:up .22s ease;}
+  @keyframes up{from{transform:translateY(40px); opacity:.6;} to{transform:none; opacity:1;}}
+  .modal h2{margin:0 0 12px; font-size:19px;}
+  .modal label{display:block; font-size:13px; color:var(--muted); margin:12px 2px 5px; font-weight:600;}
+  .modal input[type=text], .modal input[type=number]{width:100%; height:46px; border:1px solid var(--line); border-radius:12px; padding:0 13px; font-size:16px; background:var(--card);}
+  .ingedit{display:flex; gap:8px; margin-top:8px; align-items:center;}
+  .ingedit input.n{flex:1;}
+  .ingedit input.q{width:64px; text-align:center;}
+  .ingedit .x{border:0; background:none; color:#c9c6ba; font-size:20px; cursor:pointer;}
+  .empty{text-align:center; color:var(--muted); padding:40px 20px; font-size:15px;}
+  .empty .big{font-size:34px; display:block; margin-bottom:8px;}
+  .hidden{display:none !important;}
+  .catcount{font-size:11px; color:var(--muted); background:var(--bg); border-radius:6px; padding:1px 6px; margin-left:auto;}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <h1 id="viewTitle">Shopping list</h1>
+    <span class="pill" id="syncPill">…</span>
+  </header>
+
+  <!-- LIST -->
+  <section id="view-list" class="view active">
+    <div class="card">
+      <div class="toggle-row">
+        <div>
+          <div data-t="aisleOrder">Walk the store in order</div>
+          <div class="sub" data-t="aisleSub">Sort by aisle for a big shop</div>
+        </div>
+        <div class="sw" id="aisleSw" role="switch" tabindex="0"><b></b></div>
+      </div>
+    </div>
+
+    <div class="addbar">
+      <input id="addInput" type="text" placeholder="Add an item…" autocomplete="off" enterkeyhint="done" />
+      <button class="go" id="addBtn" aria-label="Add">+</button>
+    </div>
+    <div class="chips" id="favChips"></div>
+
+    <div id="listBody"></div>
+
+    <div class="totalbar" id="totalBar">
+      <div class="card">
+        <div>
+          <div class="sub" data-t="estTotal">Estimated total</div>
+          <div class="big" id="totalAmt">¥0</div>
+        </div>
+        <button class="btn ghost" id="clearDone" data-t="clearDone">Clear ticked</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- PLAN -->
+  <section id="view-plan" class="view">
+    <div id="weekBody"></div>
+    <button class="btn primary full" id="buildListBtn" style="margin:6px 0 4px;">
+      <span class="ic">🛒</span><span data-t="buildList">Add planned meals to list</span>
+    </button>
+    <p class="sub" style="text-align:center; margin:8px 0 0;" data-t="buildHint">Ingredients get sorted into aisles automatically.</p>
+  </section>
+
+  <!-- MEALS -->
+  <section id="view-meals" class="view">
+    <button class="btn primary full" id="newMealBtn" style="margin:4px 0 12px;">
+      <span class="ic">＋</span><span data-t="newMeal">Save a new meal</span>
+    </button>
+    <div id="mealsBody"></div>
+  </section>
+
+  <!-- SETTINGS -->
+  <section id="view-set" class="view">
+    <div class="sec-title" data-t="general">GENERAL</div>
+    <div class="card set-group">
+      <div class="set-row">
+        <span class="lbl" data-t="language">Language</span>
+        <select id="langSel"><option value="en">English</option><option value="ja">日本語</option></select>
+      </div>
+      <div class="set-row">
+        <span class="lbl" data-t="store">Store</span>
+        <input type="text" id="storeInp" style="width:55%; height:40px; border:1px solid var(--line); border-radius:10px; padding:0 10px; background:var(--card);" />
+      </div>
+      <div class="set-row">
+        <span class="lbl" data-t="currency">Currency</span>
+        <select id="curSel"><option value="¥">¥ Yen</option><option value="£">£ Pound</option><option value="$">$ Dollar</option><option value="€">€ Euro</option></select>
+      </div>
+    </div>
+
+    <div class="sec-title" data-t="aisleSetTitle">AISLE ORDER <span class="sub" style="font-weight:500; text-transform:none; margin-left:6px;" data-t="aisleSetSub">— match your store's layout</span></div>
+    <div class="card" id="catOrderBody"></div>
+
+    <div class="sec-title" data-t="pricesTitle">SAVED PRICES</div>
+    <div class="card" id="priceBody"></div>
+
+    <div class="sec-title" data-t="syncTitle">SYNC & DATA</div>
+    <div class="card set-group">
+      <div class="set-row"><span class="lbl"><span data-t="cloud">Cloud sync</span><div class="sub" id="syncInfo"></div></span><span id="syncDot">●</span></div>
+      <div class="set-row"><span class="lbl" data-t="shareCode">Share code (same on both phones)</span></div>
+      <div class="set-row" style="padding-top:0;"><input type="text" id="shareInp" style="width:100%; height:40px; border:1px solid var(--line); border-radius:10px; padding:0 10px; background:var(--card); font-size:13px; font-family:monospace;" /></div>
+      <div class="set-row"><button class="btn ghost full" id="reloadBtn" data-t="reloadCloud">Reload from cloud</button></div>
+      <div class="set-row"><button class="btn danger full" id="resetBtn" data-t="reset">Reset everything</button></div>
+    </div>
+    <p class="sub" style="text-align:center; margin:14px 0;">Shopping · v1</p>
+  </section>
+</div>
+
+<!-- tab bar -->
+<nav class="tabs">
+  <button data-tab="list" class="on"><span class="ic">🛒</span><span data-t="tabList">List</span></button>
+  <button data-tab="plan"><span class="ic">📅</span><span data-t="tabPlan">Plan</span></button>
+  <button data-tab="meals"><span class="ic">🍳</span><span data-t="tabMeals">Meals</span></button>
+  <button data-tab="set"><span class="ic">⚙️</span><span data-t="tabSet">Settings</span></button>
+</nav>
+
+<div id="modalRoot"></div>
+
+<script>
+/* ============================================================
+   Shopping — single-file PWA (mirrors the Nudge stack)
+   localStorage-first, syncs to the shared Supabase project.
+   ============================================================ */
+
+/* ---------- Supabase (shared project, isolated table: shop_data) ---------- */
+const SUPABASE = {
+  url:  'https://epaiazxcdcseijkhrncm.supabase.co',
+  anon: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImVwYWlhenhjZGNzZWlqa2hybmNtIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzcwMjQ0MzQsImV4cCI6MjA5MjYwMDQzNH0.h2t_kFLZ_YPvuJlzPPiyXVbOnW4Ub_52hdaYosMoOus'
+};
+/* Both phones use the SAME share code to see one shared list. */
+const DEFAULT_KEY = 'shop-mum-7c1e2f04';
+const CLOUD = !!(SUPABASE.url && SUPABASE.anon);
+const LS_KEY = 'shopping_state_v1';
+
+/* ---------- categories (the aisle walk) ---------- */
+const CATS = [
+  { id:'produce',   en:'Produce',        ja:'青果',         em:'🥬' },
+  { id:'fish',      en:'Fish & seafood', ja:'鮮魚',         em:'🐟' },
+  { id:'meat',      en:'Meat',           ja:'精肉',         em:'🥩' },
+  { id:'deli',      en:'Deli',           ja:'惣菜・デリカ',  em:'🍱' },
+  { id:'bakery',    en:'Bakery',         ja:'ベーカリー',    em:'🍞' },
+  { id:'tofu',      en:'Tofu & fishcake',ja:'豆腐・練り物',  em:'🍢' },
+  { id:'dairy',     en:'Dairy & eggs',   ja:'乳製品・卵',    em:'🥚' },
+  { id:'grocery',   en:'Dry goods',      ja:'グロッサリー',  em:'🍙' },
+  { id:'seasoning', en:'Seasonings',     ja:'調味料',        em:'🧂' },
+  { id:'snacks',    en:'Snacks',         ja:'お菓子',        em:'🍪' },
+  { id:'drinks',    en:'Drinks & drink', ja:'飲料・酒',      em:'🧃' },
+  { id:'frozen',    en:'Frozen',         ja:'冷凍食品',      em:'🧊' },
+  { id:'household', en:'Household',      ja:'日用品',        em:'🧻' },
+  { id:'other',     en:'Other',          ja:'その他',        em:'📦' }
+];
+
+/* ---------- categorisation dictionary (EN + romaji + 日本語) ---------- */
+/* Checked top-to-bottom; first keyword match wins. Order resolves overlaps
+   (e.g. frozen before snacks for アイス, deli before fish for 寿司). */
+const RULES = [
+  ['household', ['tissue','toilet','kitchen paper','detergent','soap','shampoo','conditioner','sponge','wrap','foil','battery','batteries','bin bag','trash','cleaner','bleach','laundry','ティッシュ','トイレット','洗剤','石鹸','せっけん','シャンプー','スポンジ','ラップ','ホイル','電池','日用品','洗濯','掃除','ゴミ袋','ごみ袋','柔軟剤']],
+  ['frozen',    ['frozen','ice cream','icecream','gelato','冷凍','アイス','冷食','冷凍餃子']],
+  ['drinks',    ['water','tea','juice','coffee','cola','coke','soda','beer','wine','sake','whisky','whiskey','liquor','drink','juice','水','お茶','緑茶','麦茶','ジュース','コーヒー','コーラ','炭酸','ビール','ワイン','日本酒','焼酎','お酒','酒','飲料','ドリンク']],
+  ['seasoning', ['salt','soy sauce','soy','shoyu','miso','mirin','vinegar','oil','sauce','ketchup','mayo','mayonnaise','dressing','dashi','stock','spice','curry roux','roux','honey','jam','塩','醤油','しょうゆ','味噌','みそ','みりん','酢','油','サラダ油','ごま油','ソース','ケチャップ','マヨ','ドレッシング','だし','出汁','胡椒','こしょう','砂糖','さとう','調味料','香辛料','スパイス','ルー','はちみつ','蜂蜜','ジャム']],
+  ['dairy',     ['milk','egg','eggs','cheese','butter','yoghurt','yogurt','cream','margarine','牛乳','卵','たまご','玉子','チーズ','バター','ヨーグルト','生クリーム','乳製品','マーガリン']],
+  ['tofu',      ['tofu','natto','aburaage','atsuage','konnyaku','konjac','chikuwa','kamaboko','hanpen','fishcake','豆腐','納豆','厚揚げ','油揚げ','こんにゃく','蒟蒻','ちくわ','かまぼこ','はんぺん','練り物','がんも']],
+  ['bakery',    ['bread','baguette','croissant','roll','toast','bagel','muffin','pastry','パン','食パン','バゲット','クロワッサン','ロールパン','トースト','ベーグル']],
+  ['deli',      ['bento','lunchbox','prepared','deli','croquette','korokke','karaage','fried chicken','tempura','potato salad','prepared salad','惣菜','弁当','コロッケ','からあげ','唐揚げ','天ぷら','てんぷら','お寿司','寿司','サラダ','デリ','焼き鳥','焼鳥']],
+  ['fish',      ['fish','salmon','tuna','mackerel','sardine','shrimp','prawn','squid','octopus','clam','oyster','scallop','sashimi','seafood','crab','あじ','アジ','さば','サバ','鮭','さけ','まぐろ','マグロ','いか','イカ','たこ','タコ','えび','エビ','刺身','魚','ぶり','ブリ','ホタテ','あさり','かに','カニ','しらす','たら','鱈']],
+  ['meat',      ['meat','beef','pork','chicken','mince','minced','ground','bacon','ham','sausage','wiener','frankfurt','lamb','steak','thigh','breast','fillet','肉','牛','豚','鶏','とり','ひき肉','挽き肉','ささみ','もも','むね','バラ','ステーキ','ベーコン','ハム','ソーセージ','ウインナー','ウィンナー','ラム']],
+  ['snacks',    ['snack','chocolate','choco','chips','crisps','cookie','biscuit','candy','sweets','gum','cracker','senbei','nuts','popcorn','お菓子','おかし','チョコ','ポテチ','スナック','クッキー','ビスケット','あめ','飴','ガム','せんべい','煎餅','おやつ','ナッツ','ポップコーン','グミ']],
+  ['grocery',   ['rice','noodle','noodles','pasta','spaghetti','ramen','udon','soba','flour','cereal','oats','granola','canned','can ','tin','beans','nori','seaweed','konbu','furikake','tea bag','米','お米','ごはん','麺','めん','パスタ','スパゲ','ラーメン','うどん','そば','蕎麦','小麦粉','粉','缶詰','シリアル','グラノーラ','海苔','のり','昆布','乾物','豆','ふりかけ','レトルト','カップ麺']],
+  ['produce',   ['vegetable','veg','fruit','tomato','onion','potato','carrot','cabbage','lettuce','spinach','cucumber','pepper','capsicum','garlic','ginger','mushroom','broccoli','apple','banana','orange','lemon','lime','strawberry','grape','avocado','corn','beansprout','leek','daikon','eggplant','aubergine','pumpkin','sweet potato','野菜','果物','フルーツ','トマト','玉ねぎ','たまねぎ','じゃがいも','ジャガイモ','人参','にんじん','ニンジン','キャベツ','レタス','ほうれん草','きゅうり','キュウリ','ピーマン','にんにく','ニンニク','しょうが','生姜','きのこ','しめじ','エリンギ','まいたけ','しいたけ','ブロッコリー','りんご','リンゴ','バナナ','みかん','レモン','いちご','イチゴ','ぶどう','アボカド','とうもろこし','コーン','もやし','ねぎ','長ねぎ','大根','なす','ナス','かぼちゃ','さつまいも','ブルーベリー','キウイ','梨','桃']]
+];
+
+/* ---------- state ---------- */
+let S = null;
+function blank(){
+  return {
+    list: [],                 // {id,name,qty,checked,cat}
+    catalog: {},              // norm(name) -> {name,cat,price,lastPrice,fav}
+    meals: {},                // id -> {id,name,ings:[{name,qty}]}
+    plan: {},                 // dateISO -> [{type:'meal'|'item', name, mealId, qty}]
+    catOrder: CATS.map(c=>c.id),
+    overrides: {},            // norm(name) -> catId  (learned corrections)
+    settings: { aisle:true, lang:'en', currency:'¥', store:'ヤオコー新浦安店', shareKey: DEFAULT_KEY },
+    updatedAt: 0
+  };
+}
+
+/* ---------- helpers ---------- */
+const $ = (s,r=document)=>r.querySelector(s);
+const $$ = (s,r=document)=>[...r.querySelectorAll(s)];
+const norm = s => (s||'').trim().toLowerCase().replace(/\s+/g,' ');
+const uid = ()=> Date.now().toString(36)+Math.random().toString(36).slice(2,7);
+const esc = s => (s||'').replace(/[&<>"]/g, c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const cur = ()=> S.settings.currency;
+const money = n => cur() + (Math.round(n||0)).toLocaleString();
+function catObj(id){ return CATS.find(c=>c.id===id) || CATS[CATS.length-1]; }
+function catName(id){ const c=catObj(id); return S.settings.lang==='ja'? c.ja : c.en; }
+
+function categorize(name){
+  const n = norm(name);
+  if(!n) return 'other';
+  if(S.overrides[n]) return S.overrides[n];
+  for(const [cat,kws] of RULES){
+    for(const kw of kws){ if(n.includes(kw)) return cat; }
+  }
+  return 'other';
+}
+
+/* ---------- i18n ---------- */
+const I18N = {
+  en:{ aisleOrder:'Walk the store in order', aisleSub:'Sort by aisle for a big shop', estTotal:'Estimated total', clearDone:'Clear ticked',
+    buildList:'Add planned meals to list', buildHint:'Ingredients get sorted into aisles automatically.', newMeal:'Save a new meal',
+    general:'GENERAL', language:'Language', store:'Store', currency:'Currency', aisleSetTitle:'AISLE ORDER', aisleSetSub:"— match your store's layout",
+    pricesTitle:'SAVED PRICES', syncTitle:'SYNC & DATA', cloud:'Cloud sync', shareCode:'Share code (same on both phones)',
+    reloadCloud:'Reload from cloud', reset:'Reset everything', tabList:'List', tabPlan:'Plan', tabMeals:'Meals', tabSet:'Settings',
+    titleList:'Shopping list', titlePlan:'Meal planner', titleMeals:'Saved meals', titleSet:'Settings' },
+  ja:{ aisleOrder:'売り場の順に並べる', aisleSub:'まとめ買いはアイル順で', estTotal:'合計（目安）', clearDone:'チェック済みを消す',
+    buildList:'献立の材料をリストに追加', buildHint:'材料は自動で売り場ごとに並びます。', newMeal:'献立を保存',
+    general:'一般', language:'言語', store:'お店', currency:'通貨', aisleSetTitle:'売り場の順番', aisleSetSub:'— お店の並びに合わせて',
+    pricesTitle:'保存した値段', syncTitle:'同期・データ', cloud:'クラウド同期', shareCode:'共有コード（2台で同じに）',
+    reloadCloud:'クラウドから再読込', reset:'すべてリセット', tabList:'リスト', tabPlan:'献立', tabMeals:'献立集', tabSet:'設定',
+    titleList:'買い物リスト', titlePlan:'週間献立', titleMeals:'保存した献立', titleSet:'設定' }
+};
+function applyLang(){
+  const L = I18N[S.settings.lang] || I18N.en;
+  $$('[data-t]').forEach(el=>{ const k=el.getAttribute('data-t'); if(L[k]!=null) el.textContent=L[k]; });
+  $('#addInput').placeholder = S.settings.lang==='ja' ? '商品を追加…' : 'Add an item…';
+  document.documentElement.lang = S.settings.lang;
+}
+function T(k){ return (I18N[S.settings.lang]||I18N.en)[k]; }
+
+/* ---------- persistence ---------- */
+let saveTimer=null;
+function save(push=true){
+  S.updatedAt = Date.now();
+  try{ localStorage.setItem(LS_KEY, JSON.stringify(S)); }catch(e){}
+  // rotating local backup (guards against bad syncs)
+  try{ localStorage.setItem(LS_KEY+'_bak', JSON.stringify(S)); }catch(e){}
+  if(push && CLOUD){ clearTimeout(saveTimer); saveTimer=setTimeout(cloudPush, 700); }
+}
+function loadLocal(){
+  try{ const raw=localStorage.getItem(LS_KEY); if(raw) return JSON.parse(raw); }catch(e){}
+  return null;
+}
+async function cloudPush(){
+  if(!CLOUD) return;
+  setSync('saving');
+  try{
+    const key = S.settings.shareKey || DEFAULT_KEY;
+    const res = await fetch(`${SUPABASE.url}/rest/v1/shop_data?on_conflict=user_key`,{
+      method:'POST',
+      headers:{ apikey:SUPABASE.anon, Authorization:`Bearer ${SUPABASE.anon}`, 'Content-Type':'application/json', Prefer:'resolution=merge-duplicates' },
+      body: JSON.stringify({ user_key:key, data:S, updated_at:new Date().toISOString() })
+    });
+    setSync(res.ok ? 'ok' : 'err');
+  }catch(e){ setSync('err'); }
+}
+async function cloudPull(){
+  if(!CLOUD) return null;
+  try{
+    const key = S.settings.shareKey || DEFAULT_KEY;
+    const res = await fetch(`${SUPABASE.url}/rest/v1/shop_data?user_key=eq.${encodeURIComponent(key)}&select=data`,{
+      headers:{ apikey:SUPABASE.anon, Authorization:`Bearer ${SUPABASE.anon}` }
+    });
+    if(!res.ok) return null;
+    const rows = await res.json();
+    return rows[0] && rows[0].data ? rows[0].data : null;
+  }catch(e){ return null; }
+}
+function setSync(state){
+  const pill=$('#syncPill'), dot=$('#syncDot'), info=$('#syncInfo');
+  const map={ saving:['Saving…','#86847a'], ok:['Synced','#0f6e56'], err:['Offline','#d85a30'], off:['Local only','#86847a'] };
+  const [txt,col]= CLOUD ? (map[state]||map.off) : map.off;
+  if(pill){ pill.textContent=txt; pill.style.color=col; }
+  if(dot) dot.style.color=col;
+  if(info) info.textContent = CLOUD ? (S.settings.shareKey||DEFAULT_KEY) : 'Add Supabase keys to enable';
+}
+
+/* ---------- LIST view ---------- */
+function addItem(rawName, qty=1, fromPlan=false){
+  const name=(rawName||'').trim(); if(!name) return;
+  const cat=categorize(name);
+  const n=norm(name);
+  // merge with existing unchecked same-name item
+  const ex = S.list.find(it=> norm(it.name)===n && !it.checked);
+  if(ex){ ex.qty += qty; }
+  else { S.list.push({ id:uid(), name, qty, checked:false, cat }); }
+  // remember in catalog
+  if(!S.catalog[n]) S.catalog[n]={ name, cat, price:0, lastPrice:0, fav:false };
+  if(!fromPlan) save();
+}
+function setQty(id,d){ const it=S.list.find(x=>x.id===id); if(!it) return; it.qty=Math.max(1,it.qty+d); save(); renderList(); }
+function toggleCheck(id){ const it=S.list.find(x=>x.id===id); if(!it) return; it.checked=!it.checked; save(); renderList(); }
+function delItem(id){ S.list=S.list.filter(x=>x.id!==id); save(); renderList(); }
+function setPrice(id,val){
+  const it=S.list.find(x=>x.id===id); if(!it) return;
+  const p=Math.max(0, Math.round(parseFloat(val)||0));
+  const n=norm(it.name);
+  const c=S.catalog[n]||(S.catalog[n]={name:it.name,cat:it.cat,price:0,lastPrice:0,fav:false});
+  if(c.price && c.price!==p) c.lastPrice=c.price;
+  c.price=p; it.price=p; save();
+}
+
+function renderList(){
+  const body=$('#listBody'); body.innerHTML='';
+  $('#aisleSw').classList.toggle('on', !!S.settings.aisle);
+  // favourites chips
+  const favs=Object.values(S.catalog).filter(c=>c.fav).slice(0,12);
+  const fc=$('#favChips'); fc.innerHTML='';
+  favs.forEach(f=>{ const b=document.createElement('button'); b.className='chip'; b.textContent=f.name;
+    b.onclick=()=>{ addItem(f.name,1); renderList(); }; fc.appendChild(b); });
+
+  if(!S.list.length){
+    body.innerHTML=`<div class="empty"><span class="big">🛒</span>${S.settings.lang==='ja'?'リストは空です。上から追加してください。':'Your list is empty. Add something above.'}</div>`;
+    updTotal(); return;
+  }
+
+  if(S.settings.aisle){
+    // group by category, in aisle order
+    const order=S.catOrder.length?S.catOrder:CATS.map(c=>c.id);
+    order.forEach(cid=>{
+      const items=S.list.filter(it=>it.cat===cid);
+      if(!items.length) return;
+      const c=catObj(cid);
+      const h=document.createElement('div'); h.className='sec-title';
+      h.innerHTML=`<span class="em">${c.em}</span>${esc(catName(cid))}`;
+      body.appendChild(h);
+      const card=document.createElement('div'); card.className='card';
+      items.forEach(it=>card.appendChild(rowEl(it)));
+      body.appendChild(card);
+    });
+  } else {
+    // plain order = as added
+    const card=document.createElement('div'); card.className='card';
+    S.list.forEach(it=>card.appendChild(rowEl(it)));
+    body.appendChild(card);
+  }
+  updTotal();
+}
+function rowEl(it){
+  const n=norm(it.name);
+  const price = (S.catalog[n] && S.catalog[n].price) || it.price || 0;
+  const row=document.createElement('div'); row.className='row'+(it.checked?' done':'');
+  const chk=document.createElement('div'); chk.className='check'+(it.checked?' done':''); chk.textContent=it.checked?'✓':'';
+  chk.onclick=()=>toggleCheck(it.id);
+  const name=document.createElement('div'); name.className='name'; name.textContent=it.name;
+  name.onclick=()=>openItemMenu(it);
+  const qty=document.createElement('div'); qty.className='qty';
+  qty.innerHTML=`<button aria-label="less">−</button><span>${it.qty}</span><button aria-label="more">＋</button>`;
+  qty.children[0].onclick=()=>setQty(it.id,-1); qty.children[2].onclick=()=>setQty(it.id,1);
+  const pr=document.createElement('button'); pr.className='price'+(price?'':' noprice');
+  pr.textContent= price? money(price) : (S.settings.lang==='ja'?'値段':'price');
+  pr.onclick=()=>{ const v=prompt((S.settings.lang==='ja'?'値段 ':'Price for ')+it.name, price||''); if(v!=null){ setPrice(it.id,v); renderList(); } };
+  const del=document.createElement('button'); del.className='del'; del.textContent='×'; del.onclick=()=>delItem(it.id);
+  row.append(chk,name,qty,pr,del);
+  return row;
+}
+function updTotal(){
+  const sum=S.list.reduce((a,it)=>{ const p=(S.catalog[norm(it.name)]&&S.catalog[norm(it.name)].price)||0; return a+p*it.qty; },0);
+  $('#totalAmt').textContent=money(sum);
+  $('#totalBar').classList.toggle('hidden', !S.list.length);
+}
+function openItemMenu(it){
+  const cid=it.cat;
+  const opts=CATS.map(c=>`<option value="${c.id}" ${c.id===cid?'selected':''}>${c.em} ${esc(catName(c.id))}</option>`).join('');
+  const n=norm(it.name); const fav=(S.catalog[n]&&S.catalog[n].fav);
+  openModal(`
+    <h2>${esc(it.name)}</h2>
+    <label>${S.settings.lang==='ja'?'売り場':'Aisle / category'}</label>
+    <select id="m_cat" style="width:100%;height:46px;border:1px solid var(--line);border-radius:12px;padding:0 10px;background:var(--card);">${opts}</select>
+    <p class="sub" style="margin:6px 2px;">${S.settings.lang==='ja'?'変更すると、この商品はいつもこの売り場になります。':"Change it and this item is remembered in that aisle from now on."}</p>
+    <div class="set-row" style="padding:12px 0;"><span class="lbl">${S.settings.lang==='ja'?'お気に入り':'Favourite (quick-add)'}</span>
+      <div class="sw ${fav?'on':''}" id="m_fav"><b></b></div></div>
+    <button class="btn primary full" id="m_save" style="margin-top:6px;">${S.settings.lang==='ja'?'保存':'Save'}</button>
+  `, ()=>{
+    $('#m_fav').onclick=()=>$('#m_fav').classList.toggle('on');
+    $('#m_save').onclick=()=>{
+      const newCat=$('#m_cat').value;
+      it.cat=newCat; S.overrides[n]=newCat;
+      const c=S.catalog[n]||(S.catalog[n]={name:it.name,cat:newCat,price:0,lastPrice:0,fav:false});
+      c.cat=newCat; c.fav=$('#m_fav').classList.contains('on');
+      // update other list items with same name
+      S.list.forEach(x=>{ if(norm(x.name)===n) x.cat=newCat; });
+      save(); closeModal(); renderList();
+    };
+  });
+}
+
+/* ---------- PLAN view ---------- */
+function weekDates(){
+  const out=[]; const d=new Date(); d.setHours(0,0,0,0);
+  for(let i=0;i<7;i++){ const x=new Date(d); x.setDate(d.getDate()+i); out.push(x); }
+  return out;
+}
+const iso = d => d.toISOString().slice(0,10);
+function dayName(d){
+  const en=['Sun','Mon','Tue','Wed','Thu','Fri','Sat'], ja=['日','月','火','水','木','金','土'];
+  return S.settings.lang==='ja'? ('日月火水木金土'[d.getDay()]+'曜') : ['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'][d.getDay()];
+}
+function renderPlan(){
+  const body=$('#weekBody'); body.innerHTML='';
+  const today=iso(new Date());
+  weekDates().forEach(d=>{
+    const key=iso(d); const entries=S.plan[key]||[];
+    const card=document.createElement('div'); card.className='card day'+(key===today?' today':'');
+    const head=document.createElement('div'); head.className='dhead';
+    head.innerHTML=`<span class="dname">${esc(dayName(d))}</span><span class="ddate">${d.getMonth()+1}/${d.getDate()}</span>`;
+    card.appendChild(head);
+    entries.forEach((e,idx)=>{
+      const r=document.createElement('div'); r.className='planitem';
+      r.innerHTML=`<span class="pi">${e.type==='meal'?'🍽️':'🛒'}</span><span class="pname">${esc(e.name)}</span><span class="pkind">${e.type==='meal'?(S.settings.lang==='ja'?'献立':'meal'):''}</span>`;
+      const x=document.createElement('button'); x.className='del'; x.textContent='×';
+      x.onclick=()=>{ S.plan[key].splice(idx,1); if(!S.plan[key].length) delete S.plan[key]; save(); renderPlan(); };
+      r.appendChild(x); card.appendChild(r);
+    });
+    const add=document.createElement('div'); add.className='addmini';
+    add.innerHTML=`<button>＋ ${S.settings.lang==='ja'?'献立・品を追加':'Add meal or item'}</button>`;
+    add.firstChild.onclick=()=>openPlanAdd(key);
+    card.appendChild(add);
+    body.appendChild(card);
+  });
+}
+function openPlanAdd(key){
+  const meals=Object.values(S.meals);
+  const mealOpts=meals.length? meals.map(m=>`<button class="chip" data-meal="${m.id}">${esc(m.name)}</button>`).join('')
+    : `<span class="sub">${S.settings.lang==='ja'?'まだ献立がありません（献立タブで保存）':'No saved meals yet (save some in the Meals tab)'}</span>`;
+  openModal(`
+    <h2>${S.settings.lang==='ja'?'追加':'Add to this day'}</h2>
+    <label>${S.settings.lang==='ja'?'保存した献立から':'From your saved meals'}</label>
+    <div class="chips" id="p_meals">${mealOpts}</div>
+    <label>${S.settings.lang==='ja'?'または自由に入力':'Or type anything'}</label>
+    <div class="ingedit"><input class="n" id="p_free" type="text" placeholder="${S.settings.lang==='ja'?'例：カレー / 牛乳':'e.g. Curry / Milk'}"><button class="btn primary" id="p_add">${S.settings.lang==='ja'?'追加':'Add'}</button></div>
+  `, ()=>{
+    $$('#p_meals [data-meal]').forEach(b=> b.onclick=()=>{
+      const m=S.meals[b.getAttribute('data-meal')];
+      (S.plan[key]=S.plan[key]||[]).push({type:'meal', name:m.name, mealId:m.id, qty:1});
+      save(); closeModal(); renderPlan();
+    });
+    const addFree=()=>{ const v=$('#p_free').value.trim(); if(!v) return;
+      (S.plan[key]=S.plan[key]||[]).push({type:'item', name:v, qty:1});
+      save(); closeModal(); renderPlan(); };
+    $('#p_add').onclick=addFree;
+    $('#p_free').addEventListener('keydown',e=>{ if(e.key==='Enter') addFree(); });
+  });
+}
+function buildListFromPlan(){
+  const merged={}; // norm -> {name, qty}
+  Object.values(S.plan).flat().forEach(e=>{
+    if(e.type==='meal'){
+      const m=S.meals[e.mealId]; if(!m) return;
+      m.ings.forEach(ing=>{ const k=norm(ing.name); if(!merged[k]) merged[k]={name:ing.name,qty:0}; merged[k].qty+=(ing.qty||1); });
+    } else {
+      const k=norm(e.name); if(!merged[k]) merged[k]={name:e.name,qty:0}; merged[k].qty+=(e.qty||1);
+    }
+  });
+  const keys=Object.keys(merged);
+  if(!keys.length){ toast(S.settings.lang==='ja'?'献立がまだありません':'Nothing planned yet'); return; }
+  keys.forEach(k=> addItem(merged[k].name, merged[k].qty, true));
+  save(); toast((S.settings.lang==='ja'?'追加しました：':'Added ')+keys.length+(S.settings.lang==='ja'?'品':' items'));
+  switchTab('list');
+}
+
+/* ---------- MEALS view ---------- */
+function renderMeals(){
+  const body=$('#mealsBody'); body.innerHTML='';
+  const meals=Object.values(S.meals);
+  if(!meals.length){ body.innerHTML=`<div class="empty"><span class="big">🍳</span>${S.settings.lang==='ja'?'よく作る料理を保存すると、献立に入れたとき材料が自動で出ます。':'Save meals you cook often. When you plan one, its ingredients fill the list automatically.'}</div>`; return; }
+  meals.forEach(m=>{
+    const card=document.createElement('div'); card.className='card meal'; card.style.marginBottom='10px';
+    const ings=m.ings.map(i=>`<li>${esc(i.name)}${i.qty>1?' ×'+i.qty:''}</li>`).join('');
+    card.innerHTML=`<div class="mtop"><span class="mname">${esc(m.name)}</span>
+      <span><button class="btn ghost" style="height:38px;padding:0 12px;" data-edit="${m.id}">✎</button></span></div>
+      <ul class="ings">${ings||'<li class="sub">no ingredients</li>'}</ul>
+      <button class="btn full" style="margin-top:10px;" data-toplan="${m.id}">📅 ${S.settings.lang==='ja'?'献立に入れる':'Add to a day'}</button>`;
+    body.appendChild(card);
+    card.querySelector('[data-edit]').onclick=()=>openMealEdit(m.id);
+    card.querySelector('[data-toplan]').onclick=()=>openDayPicker(m);
+  });
+}
+function openDayPicker(m){
+  const days=weekDates().map(d=>`<button class="chip" data-d="${iso(d)}">${esc(dayName(d))} ${d.getMonth()+1}/${d.getDate()}</button>`).join('');
+  openModal(`<h2>${esc(m.name)} → ${S.settings.lang==='ja'?'どの日？':'which day?'}</h2><div class="chips">${days}</div>`, ()=>{
+    $$('[data-d]').forEach(b=> b.onclick=()=>{ const k=b.getAttribute('data-d');
+      (S.plan[k]=S.plan[k]||[]).push({type:'meal',name:m.name,mealId:m.id,qty:1}); save(); closeModal(); toast(S.settings.lang==='ja'?'追加しました':'Added to plan'); });
+  });
+}
+function openMealEdit(id){
+  const m = id? S.meals[id] : {id:uid(), name:'', ings:[{name:'',qty:1}]};
+  const isNew = !id;
+  const ingRows = (ings)=> ings.map((ing,i)=>`
+    <div class="ingedit" data-i="${i}">
+      <input class="n" type="text" value="${esc(ing.name)}" placeholder="${S.settings.lang==='ja'?'材料':'ingredient'}">
+      <input class="q" type="number" min="1" value="${ing.qty||1}">
+      <button class="x" aria-label="remove">×</button>
+    </div>`).join('');
+  let draft = JSON.parse(JSON.stringify(m.ings.length?m.ings:[{name:'',qty:1}]));
+  openModal(`
+    <h2>${isNew?(S.settings.lang==='ja'?'新しい献立':'New meal'):(S.settings.lang==='ja'?'献立を編集':'Edit meal')}</h2>
+    <label>${S.settings.lang==='ja'?'献立の名前':'Meal name'}</label>
+    <input type="text" id="me_name" value="${esc(m.name)}" placeholder="${S.settings.lang==='ja'?'例：肉じゃが':'e.g. Curry rice'}">
+    <label>${S.settings.lang==='ja'?'材料':'Ingredients'}</label>
+    <div id="me_ings">${ingRows(draft)}</div>
+    <button class="btn ghost" id="me_adding" style="margin-top:8px;">＋ ${S.settings.lang==='ja'?'材料を追加':'Add ingredient'}</button>
+    <div style="display:flex; gap:8px; margin-top:16px;">
+      ${isNew?'':`<button class="btn danger" id="me_del">${S.settings.lang==='ja'?'削除':'Delete'}</button>`}
+      <button class="btn primary full" id="me_save">${S.settings.lang==='ja'?'保存':'Save meal'}</button>
+    </div>
+  `, ()=>{
+    const wrap=$('#me_ings');
+    const bind=()=>{
+      $$('.ingedit',wrap).forEach(r=>{
+        r.querySelector('.x').onclick=()=>{ r.remove(); };
+      });
+    };
+    bind();
+    $('#me_adding').onclick=()=>{ const div=document.createElement('div'); div.className='ingedit';
+      div.innerHTML=`<input class="n" type="text" placeholder="${S.settings.lang==='ja'?'材料':'ingredient'}"><input class="q" type="number" min="1" value="1"><button class="x">×</button>`;
+      div.querySelector('.x').onclick=()=>div.remove(); wrap.appendChild(div); div.querySelector('.n').focus(); };
+    $('#me_save').onclick=()=>{
+      const name=$('#me_name').value.trim(); if(!name){ toast(S.settings.lang==='ja'?'名前を入れてください':'Enter a name'); return; }
+      const ings=$$('.ingedit',wrap).map(r=>({name:r.querySelector('.n').value.trim(), qty:Math.max(1,parseInt(r.querySelector('.q').value)||1)})).filter(i=>i.name);
+      S.meals[m.id]={id:m.id, name, ings};
+      save(); closeModal(); renderMeals();
+    };
+    if(!isNew) $('#me_del').onclick=()=>{ if(confirm(S.settings.lang==='ja'?'削除しますか？':'Delete this meal?')){ delete S.meals[m.id]; save(); closeModal(); renderMeals(); } };
+  });
+}
+
+/* ---------- SETTINGS view ---------- */
+function renderSettings(){
+  $('#langSel').value=S.settings.lang;
+  $('#curSel').value=S.settings.currency;
+  $('#storeInp').value=S.settings.store||'';
+  $('#shareInp').value=S.settings.shareKey||DEFAULT_KEY;
+  setSync('ok');
+  // category order
+  const ob=$('#catOrderBody'); ob.innerHTML='';
+  const order=S.catOrder.length?S.catOrder:CATS.map(c=>c.id);
+  order.forEach((cid,i)=>{
+    const c=catObj(cid); const cnt=S.list.filter(x=>x.cat===cid).length;
+    const r=document.createElement('div'); r.className='ordrow';
+    r.innerHTML=`<span class="em" style="font-size:18px;">${c.em}</span><span class="oname">${esc(catName(cid))}</span>${cnt?`<span class="catcount">${cnt}</span>`:''}
+      <span class="arr"><button ${i===0?'disabled':''} data-up>↑</button><button ${i===order.length-1?'disabled':''} data-dn>↓</button></span>`;
+    r.querySelector('[data-up]').onclick=()=>{ if(i>0){ [order[i-1],order[i]]=[order[i],order[i-1]]; S.catOrder=order; save(); renderSettings(); } };
+    r.querySelector('[data-dn]').onclick=()=>{ if(i<order.length-1){ [order[i+1],order[i]]=[order[i],order[i+1]]; S.catOrder=order; save(); renderSettings(); } };
+    ob.appendChild(r);
+  });
+  // saved prices
+  const pb=$('#priceBody'); pb.innerHTML='';
+  const cats=Object.values(S.catalog).sort((a,b)=>a.name.localeCompare(b.name));
+  if(!cats.length){ pb.innerHTML=`<div class="empty" style="padding:24px;">${S.settings.lang==='ja'?'値段を入れると、ここに保存され次回から自動で出ます。':'Prices you enter while shopping are saved here and pre-filled next time.'}</div>`; }
+  cats.forEach(c=>{
+    const r=document.createElement('div'); r.className='set-row';
+    r.innerHTML=`<span class="lbl">${esc(c.name)} <span class="sub">${esc(catName(c.cat))}</span></span>
+      <span style="display:flex;align-items:center;gap:6px;">${cur()}<input type="number" min="0" value="${c.price||''}" style="width:84px;height:38px;text-align:right;" data-pn="${esc(norm(c.name))}">
+      <button class="del" data-del="${esc(norm(c.name))}">×</button></span>`;
+    r.querySelector('[data-pn]').onchange=(e)=>{ c.price=Math.max(0,Math.round(parseFloat(e.target.value)||0)); save(false); save(); };
+    r.querySelector('[data-del]').onclick=()=>{ delete S.catalog[norm(c.name)]; save(); renderSettings(); };
+    pb.appendChild(r);
+  });
+}
+
+/* ---------- modal + toast ---------- */
+function openModal(html, after){
+  const root=$('#modalRoot');
+  root.innerHTML=`<div class="modal-bg"><div class="modal">${html}</div></div>`;
+  root.querySelector('.modal-bg').onclick=(e)=>{ if(e.target.classList.contains('modal-bg')) closeModal(); };
+  if(after) after();
+}
+function closeModal(){ $('#modalRoot').innerHTML=''; }
+let toastTimer=null;
+function toast(msg){
+  let t=$('#toast');
+  if(!t){ t=document.createElement('div'); t.id='toast';
+    t.style.cssText='position:fixed;left:50%;bottom:calc(86px + env(safe-area-inset-bottom));transform:translateX(-50%);background:#26251f;color:#fff;padding:11px 18px;border-radius:12px;font-size:14px;z-index:80;opacity:0;transition:.2s;max-width:90%;text-align:center;';
+    document.body.appendChild(t); }
+  t.textContent=msg; t.style.opacity='1';
+  clearTimeout(toastTimer); toastTimer=setTimeout(()=>t.style.opacity='0',1800);
+}
+
+/* ---------- tabs ---------- */
+function switchTab(tab){
+  $$('.view').forEach(v=>v.classList.remove('active'));
+  $('#view-'+tab).classList.add('active');
+  $$('nav.tabs button').forEach(b=>b.classList.toggle('on', b.dataset.tab===tab));
+  const titles={list:'titleList',plan:'titlePlan',meals:'titleMeals',set:'titleSet'};
+  $('#viewTitle').textContent=T(titles[tab]);
+  if(tab==='list') renderList();
+  if(tab==='plan') renderPlan();
+  if(tab==='meals') renderMeals();
+  if(tab==='set') renderSettings();
+  window.scrollTo(0,0);
+}
+
+/* ---------- wire up ---------- */
+function bind(){
+  $$('nav.tabs button').forEach(b=> b.onclick=()=>switchTab(b.dataset.tab));
+  $('#addBtn').onclick=()=>{ const v=$('#addInput').value; if(v.trim()){ addItem(v); $('#addInput').value=''; renderList(); $('#addInput').focus(); } };
+  $('#addInput').addEventListener('keydown',e=>{ if(e.key==='Enter'){ e.preventDefault(); $('#addBtn').click(); } });
+  $('#aisleSw').onclick=()=>{ S.settings.aisle=!S.settings.aisle; save(); renderList(); };
+  $('#aisleSw').addEventListener('keydown',e=>{ if(e.key==='Enter'||e.key===' '){ e.preventDefault(); $('#aisleSw').click(); } });
+  $('#clearDone').onclick=()=>{ S.list=S.list.filter(it=>!it.checked); save(); renderList(); };
+  $('#buildListBtn').onclick=buildListFromPlan;
+  $('#newMealBtn').onclick=()=>openMealEdit(null);
+  $('#langSel').onchange=e=>{ S.settings.lang=e.target.value; save(); applyLang(); switchTab('set'); };
+  $('#curSel').onchange=e=>{ S.settings.currency=e.target.value; save(); };
+  $('#storeInp').onchange=e=>{ S.settings.store=e.target.value.trim(); save(); };
+  $('#shareInp').onchange=async e=>{ S.settings.shareKey=e.target.value.trim()||DEFAULT_KEY; save(false);
+    const remote=await cloudPull(); if(remote){ S=remote; normalizeState(); save(false); applyLang(); switchTab('list'); toast('Linked'); } else { save(); } };
+  $('#reloadBtn').onclick=async()=>{ const r=await cloudPull(); if(r){ S=r; normalizeState(); try{localStorage.setItem(LS_KEY,JSON.stringify(S));}catch(e){}; applyLang(); switchTab('list'); toast(S.settings.lang==='ja'?'読み込みました':'Reloaded'); } else toast('Nothing in cloud'); };
+  $('#resetBtn').onclick=()=>{ if(confirm('Reset everything on this device?')){ S=blank(); save(); applyLang(); switchTab('list'); } };
+}
+
+function normalizeState(){
+  const b=blank();
+  S=Object.assign(b, S||{});
+  S.settings=Object.assign(b.settings, S.settings||{});
+  if(!Array.isArray(S.catOrder)||!S.catOrder.length) S.catOrder=CATS.map(c=>c.id);
+  // ensure any new categories appear in order
+  CATS.forEach(c=>{ if(!S.catOrder.includes(c.id)) S.catOrder.push(c.id); });
+  S.list=S.list||[]; S.catalog=S.catalog||{}; S.meals=S.meals||{}; S.plan=S.plan||{}; S.overrides=S.overrides||{};
+  // backfill categories for older items
+  S.list.forEach(it=>{ if(!it.cat) it.cat=categorize(it.name); });
+}
+
+/* ---------- boot ---------- */
+async function boot(){
+  S = loadLocal() || blank();
+  normalizeState();
+  applyLang();
+  bind();
+  switchTab('list');
+  setSync('saving');
+  // pull remote, take it if newer
+  if(CLOUD){
+    const remote=await cloudPull();
+    if(remote && (remote.updatedAt||0) > (S.updatedAt||0)){
+      S=remote; normalizeState(); try{localStorage.setItem(LS_KEY,JSON.stringify(S));}catch(e){}
+      applyLang(); switchTab('list');
+    }
+    setSync('ok');
+    // push our state up so the row exists
+    cloudPush();
+  } else setSync('off');
+}
+boot();
+
+if('serviceWorker' in navigator){ window.addEventListener('load',()=>navigator.serviceWorker.register('sw.js').catch(()=>{})); }
+</script>
+</body>
+</html>
