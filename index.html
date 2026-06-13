@@ -716,8 +716,10 @@ function renderBudget(){
     <div class="card" style="padding:14px;margin-top:10px;">
       <div style="display:flex;justify-content:space-between;font-weight:700;"><span>${S.settings.lang==='ja'?'今月の支出':"This month's spend"}</span><span class="${overM?'':''}" style="${overM?'color:var(--coral)':''}">${money(mi.spentMonth)} / ${money(mi.budget)}</span></div>
       <div class="bar"><b class="${overM?'over':''}" style="width:${pctM}%"></b></div>
+      ${(S.spend&&S.spend.length)?`<button id="clearSpend" style="margin-top:11px;background:none;border:0;color:var(--muted);font-size:13px;font-weight:700;cursor:pointer;padding:2px 0;">${S.settings.lang==='ja'?'支出履歴を消す':'Clear spend history'}</button>`:''}
     </div>`;
   z.appendChild(g);
+  const cs=$('#clearSpend'); if(cs) cs.onclick=()=>{ if(confirm(S.settings.lang==='ja'?'これまでの支出履歴をすべて消しますか？（予算はそのまま）':'Clear all recorded spend? (Your budget stays.)')){ S.spend=[]; save(); renderBudget(); renderList(); } };
 }
 
 /* ---------- PLAN ---------- */
