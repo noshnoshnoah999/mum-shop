@@ -1,6 +1,6 @@
 {
-  "name": "Aisle Be There",
-  "short_name": "Aisle",
+  "name": "Supermarket Shopping",
+  "short_name": "Shopping",
   "description": "Shopping list, meal planner, budget and price memory",
   "start_url": "./index.html",
   "scope": "./",

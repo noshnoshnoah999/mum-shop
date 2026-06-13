@@ -6,10 +6,10 @@
 <meta name="theme-color" content="#1d9e75" />
 <meta name="apple-mobile-web-app-capable" content="yes" />
 <meta name="apple-mobile-web-app-status-bar-style" content="default" />
-<meta name="apple-mobile-web-app-title" content="Aisle Be There" />
+<meta name="apple-mobile-web-app-title" content="Supermarket Shopping" />
 <link rel="manifest" href="manifest.json" />
 <link rel="apple-touch-icon" href="icon-180.png" />
-<title>Aisle Be There</title>
+<title>Supermarket Shopping</title>
 <style>
   :root{
     --bg:#f6f4ec; --card:#ffffff; --ink:#23221c; --muted:#8a887d; --line:#e8e5d9;
@@ -153,7 +153,7 @@
 <div class="wrap">
   <header>
     <div class="hrow">
-      <div><h1 id="viewTitle">Aisle Be There</h1><div class="datetime" id="datetime"></div></div>
+      <div><h1 id="viewTitle">Supermarket Shopping</h1><div class="datetime" id="datetime"></div></div>
       <span class="pill" id="syncPill">…</span>
     </div>
   </header>
@@ -233,7 +233,7 @@
       <div class="set-row"><button class="bigbtn ghost" id="reloadBtn" data-t="reloadCloud">Reload from cloud</button></div>
       <div class="set-row"><button class="bigbtn ghost" style="color:var(--coral);border-color:#f0d8cd;" id="resetBtn" data-t="reset">Reset everything</button></div>
     </div>
-    <p class="sub" style="text-align:center; margin:16px 0;">Aisle Be There · v2</p>
+    <p class="sub" style="text-align:center; margin:16px 0;">Supermarket Shopping · v2</p>
   </section>
 </div>
 
@@ -248,7 +248,7 @@
 
 <script>
 /* ============================================================
-   Aisle Be There — shopping PWA (single file, mirrors Nudge).
+   Supermarket Shopping — shopping PWA (single file, mirrors Nudge).
    localStorage-first, syncs to shared Supabase (shop_data).
    ============================================================ */
 const SUPABASE = {
@@ -342,14 +342,14 @@ const I18N={
     whoTitle:"WHO'S USING THIS PHONE",whoSub:'Items you add get tagged with your name so the family can see who added what.',
     aisleSetTitle:'AISLES',addAisle:'Add an aisle',pricesTitle:'SAVED PRICES',syncTitle:'SYNC & DATA',cloud:'Cloud sync',shareCode:'Share code (same on both phones)',
     reloadCloud:'Reload from cloud',reset:'Reset everything',tabList:'List',tabPlan:'Plan',tabMeals:'Meals',tabSet:'Settings',
-    titleList:'Aisle Be There',titlePlan:'Meal planner',titleMeals:'Saved meals',titleSet:'Settings'},
+    titleList:'Supermarket Shopping',titlePlan:'Meal planner',titleMeals:'Saved meals',titleSet:'Settings'},
   ja:{aisleOrder:'売り場の順に並べる',aisleSub:'まとめ買いはアイル順で',estTotal:'合計（目安）',checkout:'お会計',
     buildList:'献立の材料をリストに追加',buildHint:'材料は自動で売り場ごとに並びます。',newMeal:'献立を保存',freqBtn:'よく買う物',
     weekPlan:'今週の献立',general:'一般',language:'言語',store:'お店',currency:'通貨',monthBudget:'今月の予算',
     whoTitle:'この端末を使う人',whoSub:'追加した品にはあなたの名前が付き、家族が誰が追加したか分かります。',
     aisleSetTitle:'売り場',addAisle:'売り場を追加',pricesTitle:'保存した値段',syncTitle:'同期・データ',cloud:'クラウド同期',shareCode:'共有コード（2台で同じに）',
     reloadCloud:'クラウドから再読込',reset:'すべてリセット',tabList:'リスト',tabPlan:'献立',tabMeals:'献立集',tabSet:'設定',
-    titleList:'Aisle Be There',titlePlan:'週間献立',titleMeals:'保存した献立',titleSet:'設定'}
+    titleList:'Supermarket Shopping',titlePlan:'週間献立',titleMeals:'保存した献立',titleSet:'設定'}
 };
 function T(k){ return (I18N[S.settings.lang]||I18N.en)[k]; }
 function applyLang(){
