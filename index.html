@@ -648,23 +648,36 @@ function renderRequests(){
     card.appendChild(head);
     pend.forEach(r=>{
       const row=document.createElement('div'); row.className='req';
-      row.innerHTML=`${r.photo?`<img src="${r.photo}" alt="">`:'<div style="width:46px;height:46px;border-radius:10px;background:var(--bg);display:flex;align-items:center;justify-content:center;font-size:22px;">🛒</div>'}
-        <div class="rt">${esc(r.text)}<small>${esc(r.from||'family')} · ${timeAgo(r.at)}</small></div>
+      row.innerHTML=`${r.photo?`<img src="${r.photo}" alt="" style="cursor:zoom-in">`:'<div style="width:46px;height:46px;border-radius:10px;background:var(--bg);display:flex;align-items:center;justify-content:center;font-size:22px;">🛒</div>'}
+        <div class="rt">${esc(r.text)}<small>${esc(r.from||'family')} · ${timeAgo(r.at)}${r.photo?(S.settings.lang==='ja'?' · タップで拡大':' · tap photo to enlarge'):''}</small></div>
         <div class="yn"><button class="y" title="yes">✓</button><button class="n" title="no">×</button></div>`;
+      const im=row.querySelector('img'); if(im) im.onclick=()=>openPhoto(r.photo);
       row.querySelector('.y').onclick=()=>{addItem(r.text,1); r.status='yes'; save(); renderList(); toast(S.settings.lang==='ja'?'リストに追加しました':'Added to your list');};
       row.querySelector('.n').onclick=()=>{r.status='no'; save(); renderList();};
       card.appendChild(row);
     });
     z.appendChild(card);
   }
-  // secondary: show status of own recent requests
+  // secondary: show all my sent requests (pending + answered) with status
   if(!isPrimary){
-    const mine=(S.requests||[]).filter(r=>r.from===ROLE&&r.status!=='pending').slice(-3);
-    mine.forEach(r=>{
-      const t=document.createElement('div'); t.className='sub'; t.style.margin='2px 4px';
-      t.textContent=`${r.status==='yes'?'✅':'❌'} ${r.text} — ${r.status==='yes'?(S.settings.lang==='ja'?'入れてくれました':'Mum got it'):(S.settings.lang==='ja'?'今回はなし':'not this time')}`;
-      z.appendChild(t);
-    });
+    const mine=(S.requests||[]).filter(r=>r.from===ROLE).slice(-8).reverse();
+    if(mine.length){
+      const card=document.createElement('div'); card.className='card'; card.style.marginTop='8px';
+      const head=document.createElement('div'); head.className='catchip'; head.style.cssText='background:var(--accent-soft);color:var(--accent-d);margin:0;border-radius:16px 16px 0 0;width:100%;padding:11px 14px;';
+      head.innerHTML=`<span class="em">📨</span>${S.settings.lang==='ja'?'送ったお願い':'My requests'} ·${mine.length}`;
+      card.appendChild(head);
+      mine.forEach(r=>{
+        const st = r.status==='yes' ? {e:'✅',t:(S.settings.lang==='ja'?'入れてくれました':'Mum got it'),c:'var(--accent-d)'}
+                 : r.status==='no'  ? {e:'❌',t:(S.settings.lang==='ja'?'今回はなし':'Not this time'),c:'var(--coral)'}
+                 :                    {e:'⏳',t:(S.settings.lang==='ja'?'返事まち':'Waiting for Mum'),c:'var(--muted)'};
+        const row=document.createElement('div'); row.className='req';
+        row.innerHTML=`${r.photo?`<img src="${r.photo}" alt="" style="cursor:zoom-in">`:'<div style="width:46px;height:46px;border-radius:10px;background:var(--bg);display:flex;align-items:center;justify-content:center;font-size:22px;">🛒</div>'}
+          <div class="rt">${esc(r.text)}<small>${st.e} <span style="color:${st.c};font-weight:700;">${st.t}</span> · ${timeAgo(r.at)}</small></div>`;
+        const im=row.querySelector('img'); if(im) im.onclick=()=>openPhoto(r.photo);
+        card.appendChild(row);
+      });
+      z.appendChild(card);
+    }
   }
 }
 function openAskRequest(){
@@ -872,6 +885,12 @@ function openModal(html,after,center){
   if(after) after();
 }
 function closeModal(){ $('#modalRoot').innerHTML=''; }
+function openPhoto(src){
+  if(!src) return;
+  openModal(`<img src="${src}" alt="" style="width:100%;max-height:70vh;object-fit:contain;border-radius:14px;display:block;">
+    <button class="bigbtn ghost" id="ph_close" style="margin-top:12px;">${S.settings.lang==='ja'?'閉じる':'Close'}</button>`,
+    ()=>{ $('#ph_close').onclick=closeModal; }, true);
+}
 let toastTimer=null;
 function toast(msg,action,fn){
   let t=$('#toast');
