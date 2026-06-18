@@ -281,7 +281,7 @@ const RULES=[
   ['household',['tissue','toilet','kitchen paper','detergent','soap','shampoo','conditioner','sponge','wrap','foil','battery','batteries','bin bag','trash','cleaner','bleach','laundry','ティッシュ','トイレット','洗剤','石鹸','せっけん','シャンプー','スポンジ','ラップ','ホイル','電池','日用品','洗濯','掃除','ゴミ袋','ごみ袋','柔軟剤']],
   ['frozen',['frozen','ice cream','icecream','gelato','冷凍','アイス','冷食','冷凍餃子']],
   ['drinks',['water','tea','juice','coffee','cola','coke','soda','beer','wine','sake','whisky','whiskey','liquor','drink','水','お茶','緑茶','麦茶','ジュース','コーヒー','コーラ','炭酸','ビール','ワイン','日本酒','焼酎','お酒','酒','飲料','ドリンク']],
-  ['seasoning',['salt','soy sauce','soy','shoyu','miso','mirin','vinegar','oil','sauce','ketchup','mayo','mayonnaise','dressing','dashi','stock','spice','curry roux','roux','honey','jam','塩','醤油','しょうゆ','味噌','みそ','みりん','酢','油','サラダ油','ごま油','ソース','ケチャップ','マヨ','ドレッシング','だし','出汁','胡椒','こしょう','砂糖','さとう','調味料','香辛料','ルー','はちみつ','蜂蜜','ジャム']],
+  ['seasoning',['salt','soy sauce','soy','shoyu','miso','mirin','vinegar','oil','sauce','ketchup','mayo','mayonnaise','dressing','dashi','stock','spice','curry roux','roux','honey','jam','sugar','塩','醤油','しょうゆ','味噌','みそ','みりん','酢','油','サラダ油','ごま油','ソース','ケチャップ','マヨ','ドレッシング','だし','出汁','胡椒','こしょう','砂糖','さとう','調味料','香辛料','ルー','はちみつ','蜂蜜','ジャム']],
   ['dairy',['milk','egg','eggs','cheese','butter','yoghurt','yogurt','cream','margarine','牛乳','卵','たまご','玉子','チーズ','バター','ヨーグルト','生クリーム','乳製品','マーガリン']],
   ['tofu',['tofu','natto','aburaage','atsuage','konnyaku','konjac','chikuwa','kamaboko','hanpen','fishcake','豆腐','納豆','厚揚げ','油揚げ','こんにゃく','蒟蒻','ちくわ','かまぼこ','はんぺん','練り物','がんも']],
   ['bakery',['bread','baguette','croissant','roll','toast','bagel','muffin','pastry','パン','食パン','バゲット','クロワッサン','ロールパン','トースト','ベーグル']],
@@ -292,6 +292,21 @@ const RULES=[
   ['grocery',['rice','noodle','noodles','pasta','spaghetti','ramen','udon','soba','flour','cereal','oats','granola','canned','tin','beans','nori','seaweed','konbu','furikake','米','お米','ごはん','麺','めん','パスタ','スパゲ','ラーメン','うどん','そば','蕎麦','小麦粉','粉','缶詰','シリアル','グラノーラ','海苔','のり','昆布','乾物','豆','ふりかけ','レトルト','カップ麺']],
   ['produce',['vegetable','veg','fruit','tomato','onion','potato','carrot','cabbage','lettuce','spinach','cucumber','pepper','capsicum','garlic','ginger','mushroom','broccoli','apple','banana','orange','lemon','lime','strawberry','grape','avocado','corn','beansprout','leek','daikon','eggplant','aubergine','pumpkin','野菜','果物','フルーツ','トマト','玉ねぎ','たまねぎ','じゃがいも','ジャガイモ','人参','にんじん','ニンジン','キャベツ','レタス','ほうれん草','きゅうり','キュウリ','ピーマン','にんにく','ニンニク','しょうが','生姜','きのこ','しめじ','エリンギ','しいたけ','ブロッコリー','りんご','リンゴ','バナナ','みかん','レモン','いちご','イチゴ','ぶどう','アボカド','とうもろこし','コーン','もやし','ねぎ','長ねぎ','大根','なす','ナス','かぼちゃ','さつまいも','キウイ','梨','桃']]
 ];
+/* emoji → category (Mum likes typing food emojis). Checked before the keyword rules. */
+const EMOJI_CAT={
+  '🍆':'produce','🍅':'produce','🥕':'produce','🥔':'produce','🧅':'produce','🧄':'produce','🥬':'produce','🥦':'produce','🌽':'produce','🥒':'produce','🍄':'produce','🫑':'produce','🌶':'produce','🥑':'produce','🍎':'produce','🍏':'produce','🍌':'produce','🍊':'produce','🍋':'produce','🍓':'produce','🍇':'produce','🍑':'produce','🍒':'produce','🍐':'produce','🥝':'produce','🍈':'produce','🍉':'produce','🍍':'produce','🥭':'produce','🫐':'produce','🥥':'produce','🍠':'produce','🫛':'produce','🫚':'produce',
+  '🥩':'meat','🍗':'meat','🍖':'meat','🥓':'meat',
+  '🐟':'fish','🐠':'fish','🦐':'fish','🦑':'fish','🐙':'fish','🦀':'fish','🦞':'fish','🐚':'fish','🍣':'fish','🍤':'fish',
+  '🥛':'dairy','🧀':'dairy','🧈':'dairy','🥚':'dairy',
+  '🍞':'bakery','🥖':'bakery','🥐':'bakery','🥯':'bakery','🥨':'bakery',
+  '🍦':'frozen','🍨':'frozen',
+  '💧':'drinks','🧃':'drinks','☕':'drinks','🍵':'drinks','🥤':'drinks','🍶':'drinks','🍺':'drinks','🍷':'drinks','🥂':'drinks','🍸':'drinks','🥃':'drinks','🍹':'drinks',
+  '🧂':'seasoning','🍯':'seasoning',
+  '🍚':'grocery','🍙':'grocery','🍜':'grocery','🍝':'grocery','🌾':'grocery','🥫':'grocery','🫘':'grocery','🥣':'grocery',
+  '🍱':'deli','🥗':'deli','🍢':'deli',
+  '🍫':'snacks','🍪':'snacks','🍬':'snacks','🍭':'snacks','🍿':'snacks','🥠':'snacks','🍘':'snacks','🍩':'snacks','🍰':'snacks','🧁':'snacks','🍮':'snacks','🍡':'snacks',
+  '🧻':'household','🧼':'household','🧽':'household','🧹':'household','🧺':'household','🔋':'household','🪥':'household'
+};
 /* default pack/bottle units for some items */
 const UNIT_GUESS=[
   [['egg','卵','たまご'],'pack'], [['milk','牛乳'],'bottle'], [['water','水','juice','ジュース','cola','コーラ','beer','ビール','wine','soda'],'bottle'],
@@ -330,6 +345,7 @@ function categorize(name){
   const n=norm(name); if(!n) return 'other';
   if(S.overrides[n]) return S.overrides[n];
   const live=new Set((S.cats||DEFAULT_CATS).filter(c=>!c.hidden).map(c=>c.id));
+  for(const ch of n){ const ec=EMOJI_CAT[ch]; if(ec&&live.has(ec)) return ec; }
   for(const [cat,kws] of RULES){ if(!live.has(cat)) continue; for(const kw of kws){ if(n.includes(kw)) return cat; } }
   return 'other';
 }
@@ -951,6 +967,10 @@ function normalizeState(){
   S.requests=S.requests||[]; S.spend=S.spend||[]; if(S.session===undefined) S.session=null;
   if(!S.settings.members) S.settings.members=[{name:'Mum',role:'primary'},{name:'Noah',role:'secondary'}];
   S.list.forEach(it=>{ if(!it.cat)it.cat=categorize(it.name); if(!it.unit)it.unit=guessUnit(it.name); });
+  // re-file anything stuck in 'other' that the dictionary can now place (e.g. emojis added before this was supported).
+  // categorize() returns any manual override first, so deliberate corrections are never touched.
+  S.list.forEach(it=>{ if(it.cat==='other'){ const c=categorize(it.name); if(c!=='other') it.cat=c; } });
+  Object.values(S.catalog).forEach(c=>{ if(c.cat==='other'){ const nc=categorize(c.name); if(nc!=='other') c.cat=nc; } });
 }
 
 /* ---------- boot ---------- */
