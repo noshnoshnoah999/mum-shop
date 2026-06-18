@@ -680,8 +680,10 @@ function renderRequests(){
     if(mine.length){
       const card=document.createElement('div'); card.className='card'; card.style.marginTop='8px';
       const head=document.createElement('div'); head.className='catchip'; head.style.cssText='background:var(--accent-soft);color:var(--accent-d);margin:0;border-radius:16px 16px 0 0;width:100%;padding:11px 14px;';
-      head.innerHTML=`<span class="em">📨</span>${S.settings.lang==='ja'?'送ったお願い':'My requests'} ·${mine.length}`;
+      head.innerHTML=`<span class="em">📨</span>${S.settings.lang==='ja'?'送ったお願い':'My requests'} ·${mine.length}
+        <button id="clearReq" style="margin-left:auto;background:none;border:0;color:var(--accent-d);font-size:13px;font-weight:700;cursor:pointer;opacity:.75;padding:0;">${S.settings.lang==='ja'?'消す':'Clear'}</button>`;
       card.appendChild(head);
+      head.querySelector('#clearReq').onclick=()=>{ if(confirm(S.settings.lang==='ja'?'送ったお願いをすべて消しますか？':'Clear all your requests?')){ S.requests=(S.requests||[]).filter(r=>r.from!==ROLE); save(); renderList(); } };
       mine.forEach(r=>{
         const st = r.status==='yes' ? {e:'✅',t:(S.settings.lang==='ja'?'入れてくれました':'Mum got it'),c:'var(--accent-d)'}
                  : r.status==='no'  ? {e:'❌',t:(S.settings.lang==='ja'?'今回はなし':'Not this time'),c:'var(--coral)'}
