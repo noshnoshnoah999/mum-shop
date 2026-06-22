@@ -433,13 +433,30 @@ function setPrice(it,val){
 }
 let lastTick=null;
 function toggleCheck(it,rowEl){
-  it.checked=!it.checked; it.checkedAt=it.checked?Date.now():0;
-  if(it.checked){
-    lastTick=it.id;
-    if(rowEl){ rowEl.querySelector('.check').classList.add('done'); rowEl.classList.add('removing');
-      setTimeout(()=>{save(); renderList(); showUndo(it);},340); return; }
-  }
+  if(it.checked){ it.checked=false; it.checkedAt=0; save(); renderList(); return; }
+  // ticking off: if it's never had a price (e.g. a brand-new item), ask before it disappears
+  if(!priceOf(it)){ askPriceThenComplete(it,rowEl); return; }
+  completeTick(it,rowEl);
+}
+function completeTick(it,rowEl){
+  it.checked=true; it.checkedAt=Date.now(); lastTick=it.id;
+  if(rowEl){ rowEl.querySelector('.check').classList.add('done'); rowEl.classList.add('removing');
+    setTimeout(()=>{save(); renderList(); showUndo(it);},340); return; }
   save(); renderList();
+}
+function askPriceThenComplete(it,rowEl){
+  openModal(`<h2>${esc(it.name)}</h2>
+    <label>${S.settings.lang==='ja'?'いくらでしたか？':'How much was it?'} (${cur()})</label>
+    <input type="number" id="p_val" inputmode="decimal" value="" placeholder="0" style="font-size:24px;font-weight:800;text-align:right;">
+    <p class="sub" style="margin:8px 2px;">${S.settings.lang==='ja'?'保存すると次回から自動で出ます。':'Saved and pre-filled next time you buy it.'}</p>
+    <button class="bigbtn" id="p_save" style="margin-top:8px;">${S.settings.lang==='ja'?'保存してチェック':'Save & tick off'}</button>
+    <button class="bigbtn ghost" id="p_skip" style="margin-top:8px;">${S.settings.lang==='ja'?'スキップ':'Skip'}</button>`,()=>{
+    const v=$('#p_val'); setTimeout(()=>v.focus(),60);
+    const finish=()=>{ closeModal(); completeTick(it,rowEl); };
+    $('#p_save').onclick=()=>{ if(v.value) setPrice(it,v.value); finish(); };
+    $('#p_skip').onclick=finish;
+    v.addEventListener('keydown',e=>{if(e.key==='Enter')$('#p_save').click();});
+  });
 }
 function showUndo(it){
   toast((S.settings.lang==='ja'?'チェック：':'Ticked: ')+it.name, S.settings.lang==='ja'?'戻す':'Undo', ()=>{
